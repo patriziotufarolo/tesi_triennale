@@ -1,0 +1,40 @@
+[GGSV02]  Wolfgang Grieskamp, Yuri Gurevich, Wolfram Schulte, and M
+argus Veanes.  Generat-
+ing finite state machines from abstract state machines. In
+Proc. International Symposium
+on Software Testing and Analysis
+, pages 112–122, 2002.
+
+
+
+
+
+20] 
+M.  Modarres,  M.  Kaminskiy  and  V.  Krivtsov,  Reliability  Engineering 
+And Risk Analysis: A Practical Guid
+e, 2nd ed., CRC Press, 2010. 
+[21] 
+RFC 
+2544 
+-
+Benchmarking Methodology, 
+1999. 
+[22] 
+RFC 
+2889 
+-
+LAN Switch Benchmarking Methodology, 
+2000. 
+[23] 
+RFC 
+3511 
+-
+Methodology for Firewall Performance, 
+2003. 
+[24] 
+RFC 
+5180 
+-
+IPv6 Benchmarking Methodology, 
+2
+008. 

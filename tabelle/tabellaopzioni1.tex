@@ -1,0 +1,19 @@
+\begin{table}[hbtp]
+\begin{tabulary}{\textwidth}{L|L|L|L|L}
+\hline
+Option & What & Type & Default value & Description \\
+\hline\hline
+--help & & & & Shows help \\
+\hline
+conf & Path & String & /etc/testagent/ testagent.conf & Configuration file path\\
+\hline
+subscription\_conf & Path & String\  & /etc/testagent/ subscription.conf & Communication settings file path\\
+\hline
+debug & & Boolean & False & Changes log level to warning and logs exceptions\\
+\hline
+timezone & Timezone & String & Europe/Rome & Timezone for Celery worker\\
+\hline
+\end{tabulary}
+\caption{Opzioni accettate dal comando testagent}
+\label{TaOptions}
+\end{table}

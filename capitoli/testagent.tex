@@ -1,0 +1,295 @@
+\chapter{Test Agent}
+\section*{Introduzione}
+Il Test Agent è uno dei componenti fondamentali del framework CUMULUS. La sua responsabilità è quella di effettuare i test sul ToC.
+Il suo compito è essenzialmente quello di:
+\begin{enumerate}[nolistsep]
+\item Ricevere informazioni sui Collector da eseguire
+\item Effettuare il dispatching del Probe Driver sulle varie CPU della macchina su cui è stato avviato
+\item Collezionare le evidenze raccolte durante l'esecuzione dei test
+\item Effettuare il reporting in base al risultato dei test ad esso commissionati
+\end{enumerate}
+Sono state poi previste ulteriori funzionalità corollarie, utili ad esempio per supportare diverse topologie e configurazioni.
+Lo scopo di questo capitolo vuole perciò essere quello di descrivere dettagliatamente il funzionamento di questo componente e di fornire la documentazione per il deployment nei casi d'uso più comuni.
+\section{Componenti del Test Agent}
+Le tecnologie e i componenti che sono stati utilizzati per la realizzazione del Test Agent sono:
+\newline
+\begin{description}[nolistsep]
+\item[Python 2.7]
+Python è un linguaggio di scripting e programmazione multi paradigma, molto diffuso in ambito sistemistico.
+E' comunemente usato per sviluppare applicazioni distribuite, di computazione numerica ed effettuare system testing, grazie all'elevato numero di librerie disponibili nel PyPI\footnote{Python Package Index - \textit{http://pypi.python.org/}}.
+E' sviluppato sotto una licenza open source - approvata dalla Open Source Initiative\footnote{Associazione globale no-profit improntata sulla promozione e la protezione del software open-source (software a sorgente aperto, che può essere usato, modificato e condiviso da chiunque). - \textit{http://www.opensource.org}} - che permette di usarlo e distribuirlo liberamente anche per uso commerciale.
+\newline La licenza di Python è amministrata dalla Python Software Foundation
+\footnote{Compagnia no-profit che detiene la proprietà intellettuale sul linguaggio di programmazione Python - \textit{http://www.python.org/psf}}
+\cite{PythonWebsite}
+\newline
+Il Test Agent è stato scritto in Python 2.7, utilizzando i paradigmi OOP\footnote{Object Oriented Programming - è un modello di linguaggio di programmazione organizzato attorno al concetto di "oggetti" invece di "azioni" e "dati" invece di "logica" - \textit{http://searchsoa.techtarget.com/definition/object-oriented-programming}.} e AOP\footnote{Aspect Oriented Programming - è un approccio alla programmazione che permette di definire le proprietà globali di un software per determinare con precisione come verrà compilato in eseguibile. Un aspetto è un sottoprogramma che viene associato a una specifica proprietà del programma principale - \textit{http://whatis.techtarget.com/definition/aspect-oriented-programming-AOP} }.
+\newline
+
+\item[RabbitMQ]
+RabbitMQ è un broker di messaggistica, un middleware per la comunicazione inter-processo distribuita. 
+Fornisce alle applicazioni una piattaforma comune per inviare e ricevere messaggi, e ai messaggi stessi un posto sicuro dove permanere in attesa dell'acknowledgement di avvenuta ricezione.\cite{RabbitMQWebsite} Offre:
+\begin{description}
+\item[Affidabilità]Distribuzione del carico per architetture high-availability, acknowledgement di avvenuta ricezione, persistenza, conferma di pubblicazione, 
+\item[Instradamento flessibile]I messaggi sono instradati negli Exchange prima di arrivare nelle code di consumazione. RabbitMQ offre alcuni tipi di Exchange integrati per gli scenari di routing più comuni. Per esigenze più complesse è possibile aggregare più Exchange oppure progettare il proprio Exchange implementandolo come plugin.
+\item[Clustering]Più istanze di RabbitMQ sulla stessa rete locale possono formare un cluster, costituendo così un unico broker logico.
+Inoltre le stesse code possono essere configurate in mirroring su diverse macchine dello stesso cluster, consentendo la persistenza dei messaggi anche in caso di guasti hardware.
+\item[Federazione]
+\item[Multi-protocollo]Supporto a molti protocolli di messaggistica.
+\end{description}
+
+Ai fini della realizzazione del Test Agent è stato implementato il protocollo AMQP.
+\newline
+\item[Redis]Redis è un sistema di storage e caching chiave-valore, open-source, rilasciato sotto licenza BSD. Spesso ci si riferisce a Redis come un servizio per memorizzare dati strutturati, in quanto le chiavi possono contenere stringhe, hashes, liste, insiemi, insiemi ordinati, bitmap e HyperLogLogs.\cite{RedisWebsite}\newline
+Nel Test Agent il ruolo operato da Redis è quello di broker di backend, per memorizzare lo stato dei task eseguiti dal worker Celery - di cui si discuterà in seguito - e i relativi metadati.
+\item[Tornado]
+Tornado è un web-framework e una libreria di networking asincrono per Python, originariamente sviluppata presso FriendFeed.
+Mediante l'uso di un paradigma non bloccante per la gestione delle funzioni di networking, si presenta come un prodotto molto adatto alla scalabilità, capace quindi di gestire decine di migliaia di connessioni aperte in contemporanea. Ciò lo rende adatto ad applicazioni di long-polling, WebSocket, e altre applicazioni che richiedono connessioni long-live con ogni utente.\cite{TornadoWebsite}\newline
+E' stato utilizzato Tornado per realizzare le API di sottoscrizione del Test Agent rispetto al Test Manager, e le API di monitoraggio del Test Agent.
+\item[Celery]
+Celery è un gestore di code di processi/lavori basato sul passaggio di messaggi. Il suo sviluppo è stato concentrato sull'esecuzione di processi real-time, ma vanta anche feature di schedulazione.
+Le unità di esecuzione, tasks, sono eseguite parallelamente su uno o più worker utilizzando le librerie multiprocessing, eventlet o gevent.
+I tasks possono essere eseguiti in modo asincrono (in background) o in modo sincrono (wait-until-ready).
+Per fare ciò Celery usufruisce principalmente di due librerie:
+\begin{itemize}[nolistsep]
+\item Billiard - E' un fork della libreria multiprocessing di Python, la quale a sua volta è una versione aggiornata e rinominata del pacchetto pyprocessing sviluppato da R Oudkerk.
+Billiard è stato creato per garantire la compatibilità con Python 2.4 e Python 2.5, senza rinunciare agli aggiornamenti e alle fix del canale principale python-trunk.
+\item Kombu - E' una libreria di messaggistica per Python. Il suo obiettivo è quello di semplificare la messaggistica il più possibile, fornendo, oltre a un'interfaccia di alto livello idiomatica per il protocollo AMQ, una serie di soluzioni ampiamente collaudate per la risoluzione dei problemi tipici riguardanti la messaggistica.
+\newline\newline
+\textbf{Esempio di pubblicazione su una coda:}
+publisher.py:
+\begin{python}
+from kombu import Connection
+
+with Connection('amqp://user:pass@host:5672//') as conn:
+    example_queue = conn.SimpleQueue('my_queue')
+    example_queue.put('Hello World!')
+    example_queue.close()
+\end{python}
+
+
+\textbf{Esempio di consumazione di una coda:}
+consumer.py:
+\begin{python}
+from kombu import Connection
+
+with Connection('amqp://user:pass@host:5672//') as conn:
+    example_queue = conn.SimpleQueue('my_queue')
+    message = example_queue.get(block=True, timeout=1)
+    print("Messaggio: \%s" \% message.payload)
+    message.ack()
+    example_queue.close()
+\end{python}
+\end{itemize}
+Celery costituisce il core operativo del Test Agent.
+\item[lxml Toolkit]Il toolkit XML è un binding per Python delle librerie C libxml2 e libxslt. Combina la velocità e la completezza di feature per il parsing e il factoring dell'XML con la semplicità di un'API Python nativa, fornendo compatibilità con la più nota libreria ElementTree.
+\newline
+Nel Test Agent si occupa di effettuare il parsing dei messaggi.
+\item[QEMU]QEMU è un emulatore di architetture e motore di virtualizzazione generico, rilasciato con licenza open-source. Quando usato come emulatore, può eseguire sistemi operativi e applicazioni progettati per un'architettura su un'altra differente (es. emulazione dell'architettura ARM su PC x86). Le performance sono garantite tramite la traduzione dinamica delle istruzioni.
+Quando utilizzato come motore di virtualizzazione, QEMU raggiunge performance molto vicine a quelle di un'esecuzione nativa, eseguendo il codice del sistema ospite direttamente sulla CPU del sistema ospitante. QEMU supporta la virtualizzazione tramite l'hypervisor XEN oppure mediante il modulo KVM di Linux. Usando KVM, può virtualizzare le architetture x86, PowerPC (sia server che embedded) e S390.
+\newline
+Nell'ambito del progetto è stato utilizzato per realizzare un'immagine di macchina virtuale pronta per il deploy sul cloud.
+\item[Systemd]
+Systemd è un gestore del sistema e dei servizi per i sistemi operativi Linux. Il suo design prevede la retrocompatibilità con gli init-scripts SysV, e fornisce funzionalità come l'avvio parallelo dei servizi di sistema al boot, l'attivazione on-demand dei demoni, il supporto dello snapshotting dello stato del sistema, e una logica del controllo dei servizi basata sulle dipendenze.
+Introduce inoltre il concetto di Units (unità). Esse sono rappresentate da un file di configurazione, e contengono le informazioni a proposito dei servizi di sistema, le socket in ascolto, gli snapshot salvati e altro oggetti rilevanti per il sistema di init.
+\newline
+E' stata realizzata una Unit anche per il Test Agent, affinché sia possibile effettuare attività di monitoraggio e controllo sul servizio. Per integrare il Test Agent con Systemd, è stata utilizzata la libreria python-daemon, in grado di avviare il processo in modo esclusivo generando il rispettivo file PID, contenente l'id del processo associato.
+\item[Cloud-init]
+Cloud-init è un pacchetto per gestire l'inizializzazione di un'istanza cloud.
+\newline
+E' stato utilizzato per automatizzare la creazione dell'istanza, effettuare l'installazione delle chiavi pubbliche per consentire l'accesso alla macchina virtuale del Test Agent, e per l'upload di eventuali file di configurazione in fase di boot.
+\item[Raspberry PI]
+Il Raspberry PI è un computer a basso costo, dalle dimensioni di una carta di credito. E' in grado di svolgere qualunque lavoro ci si aspetterebbe da un normale computer. Ha l'abilità di interagire con il mondo esterno ed è stato utilizzato in un largo insieme di progetti, da music machines a sistemi di motion detection.
+Il progetto è mantenuto dalla Raspberry Pi Foundation, un'agenzia formativa del regno unito.
+\newline
+Nel lavoro di tesi è stato impiegato per la realizzazione di un Test Agent fisico, per effettuare i test a livello di infrastruttura.
+L'immagine del Test Agent per Raspberry PI è basata sulla distribuzione Pidora.
+\end{description}
+
+\section{Struttura}
+Andiamo ora ad analizzare il funzionamento del Test Agent, esaminandone la struttura e l'organizzazione.
+Il Test Agent è costituito principalmente da quattro moduli:
+\begin{itemize}
+\item Modulo di subscription
+\item APIs
+\item Worker
+\item Modulo di self-assessment
+\end{itemize}
+Essi sono implementati seguendo il pattern Singleton, e vengono inizializzati nella fase di bootstrap del software.
+Successivamente a questa fase, viene effettuato il parsing dei file di configurazione e degli argomenti passati tramite riga di comando.
+In seguito viene configurato il servizio di logging, sul quale si appoggiano i componenti, ed essi vengono avviati.
+Il worker viene lanciato soltanto se è stato specificato l'insieme minimo di opzioni necessari alla sua esecuzione. In caso contrario, solamente i servizi di Subscription e API saranno funzionanti.
+In tal caso, dopo aver effettuato la sottoscrizione secondo le modalità descritte nella sottosezione "API di subscription", se persisteranno le condizioni di funzionamento del worker, esso verrà avviato.
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{
+\includegraphics[width=\paperwidth]{immagini/testagent1.png}
+}
+\caption{Bootstrapping del Test Agent}\label{fig:testagent}
+\end{figure}
+
+\section{Il protocollo AMQP}
+
+\section{APIs di subscription}
+Il processo di subscription consiste nel fornire al Worker tutte le informazioni necessarie per effettuare la sottoscrizione alle code su cui il Test Manager invia i Collector da eseguire.
+\subsection{Avvio del servizio di Subscription}
+
+\subsubsection{Sicurezza}
+Per rendere sicuro il servizio di Subscription è stato implementato il protocollo HTTP over TLS con Client Authentication.
+Questa feature di HTTPS consente di autenticare sia il server rispetto al client, tramite l'esposizione di un certificato firmato da una Certification Authority fidata, che il client rispetto al server. Per questo motivo è anche chiamata mutua autenticazione.\newline
+Per comprendere meglio il tipo di garanzia che ciò può assicurare è bene citare la relativa RFC (RFC5246).\cite{RFC5246}
+
+Il principale obiettivo del protocollo TLS è quello di fornire privatezza e integrità del dato in due applicazioni comunicanti.
+Esso si compone di due strati:
+\begin{itemize}
+\item TLS Record Protocol
+\item TLS Handshake Protocol
+\end{itemize}
+
+Al livello più basso, situato immediatamente sopra a un protocollo di trasporto affidabile (ad esempio TCP), troviamo il TLS Record Protocol.
+Esso garantisce alla sicurezza della connessione due proprietà fondamentali:
+\begin{itemize}
+\item La connessione è privata (mediante crittografia simmetrica, le cui chiavi sono generate unicamente per ogni connessione e basate su un segreto negoziato da un altro protocollo (ad esempio TLS Handshake Protocol).
+Il TLS Record Protocol può essere usato anche senza cifratura.
+\item La connessione è affidabile. Il trasporto dei messaggi include un controllo di integrità usando un MAC basato su una chiave. Per calcolare il MAC vengono usate funzioni di hashing sicure. Il Record Protocol può essere usato anche senza un MAC, ma generalmente viene usato in questo modo quando un altro protocol sta utilizzando il Record Protocol solo come trasporto per negoziare i propri parametri di sicurezza.
+\end{itemize}
+Il TLS Record Protocol è usato per l'incapsulazione di vari protocolli di livello più alto. Uno di questi protocolli incapsulati, il TLS Handshake Protocol, permette al server e al client di autenticarsi reciprocamente e di negoziare l'algoritmo di cifratura e le chiavi crittografiche prima che il protocollo applicativo trasmetta o riceva il suo primo byte di dati. Il TLS Handshake Protocol fornisce una connessione sicura che gode di tre principali proprietà:
+\begin{itemize}
+\item L'identità di un Peer può essere autenticata usando la crittografia simmetrica o a chiave pubblica (RSA, DSA, DSS, ecc.) L'autenticazione può essere opzionale, ma generalmente è richiesta da almeno uno dei due peer.
+\item La negoziazione del segreto condiviso è sicura: il segreto negoziato non è disponibile agli eavesdroppers, e per ogni connessione autenticata il segreto non può essere ottenuto, nemmeno nel caso di un attacco man-in-the-middle.
+\item La connessione è affidabile: nessun attaccante può modificare la comunicazione di negoziazione senza essere scoperto dalle parti coinvolte.
+\end{itemize}
+
+
+
+
+\subsection{Utilizzo del servizio di Subscription}
+Per effettuare la Subscription occorre inviare al servizio una chiamata POST su /.
+I parametri accettati dal servizio di Subscription sono riporati nella Tabella 5.1.
+\begin{table}[h]
+\centering
+\begin{tabular}{| m{4.4cm}| m{9cm} | }
+\hline
+\textbf{Parametro} & \textbf{Descrizione} \\ \hline
+broker\_url & URL del virtual host RabbitMQ nel formato \newline amqp://\{username\}:\{password\}@\{host\}:\{port\}/\newline\{vhost\} \\ \hline
+broker\_ssl\_enable & Valore booleano per abilitare SSL per cifrare la comunicazione con il server Rabbit \\ \hline
+broker\_ssl\_keyfile & Path della chiave privata per l'utilizzo di SSL \\ \hline
+broker\_ssl\_certfile & Path del certificato per l'utilizzo di SSL \\ \hline
+broker\_ssl\_verifycert & Booleano per abilitare l'invio di un certificato per l'autenticazione del client rispetto al broker \\ \hline
+broker\_ssl\_ca & Path del certificato della Certification Authority \\ \hline
+backend\_broker\_url & URL del broker di backend (facoltativo, può \newline essere un'altra connessione AMQP come un\newline database Redis, MongoDB, etc.) \\ \hline
+ &  \\ \hline
+tasks\_exchange\_name & Nome dell'exchange sul quale è registrata la coda da cui leggere i task \\ \hline
+tasks\_exchange\_type & Tipo di exchange utilizzato \\ \hline
+tasks\_queue\_name & Nome della coda da cui ricevere i task \\ \hline
+tasks\_routing\_key & Routing key con la quale il Test Manager instrada i task \\ \hline
+ &  \\ \hline
+results\_exchange\_name & Nome dell'exchange sul quale vanno inviati i risultati \\ \hline
+results\_exchange\_type & Tipo di exchange utilizzato \\ \hline
+results\_queue\_name & Nome della coda da cui ricevere i task \\ \hline
+results\_routing\_key & results\_queue\_name \\ \hline
+\end{tabular}
+\caption{Parametri di Subscription}
+\label{tab:subscription_parameters}
+\end{table}
+All'invio della POST viene generato un file di configurazione al percorso "subscription\_conf" specificato nella configurazione generale del TestAgent (valore di default: /etc/testagent/subscription.conf) con i dati inviati.
+Se è stato fornito l'insieme minimo di parametri richiesti, il Worker viene poi avviato con la nuova configurazione ed inizia a consumare i task.
+Per cambiare le impostazioni di sottoscrizione in un secondo momento, è possibile aggiornare il file inviando una nuova configurazione con il metodo PUT.
+In tal caso il worker verrà prima fermato, attendendo il completamento dei task in esecuzione, poi riavviato con la nuova configurazione.
+Per eliminare la configurazione esistente bisogna inviare una richiesta con metodo DELETE.
+Il worker verrà fermato e verrà riavviato solo quando il servizio di Subscription riceverà una nuova configurazione valida.
+Per motivi di confidenzialità non è previsto il retrieve delle informazioni di comunicazione tramite metodo GET.
+\section{APIs di monitoraggio}
+Le APIs di monitoraggio consentono di ottenere le informazioni sullo stato del Test Agent e dei relativi task.
+\subsection{Avvio delle APIs di monitoraggio}
+Il servizio di monitoraggio è rappresentato da un oggetto Singleton e viene avviato nella fase di bootstrap del Test Agent.
+Le impostazioni di avvio devono essere specificate nel file di configurazione del Test Agent (default: /etc/testagent/testagent.conf)
+Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8080.
+\subsection{Utilizzo delle APIs di monitoraggio}
+\begin{table}[h]
+\centering
+\begin{tabular}{| m{4.4cm}| m{9cm} | }
+\hline
+\textbf{URL} & \textbf{Descrizione} \\ \hline
+/tasks & Lista di tutti i task eseguiti, da eseguire, e in attesa di esecuzione relativi a un Test Agent durante tutto il suo ciclo di vita \\ \hline 
+/task/info/[task-id] & Ottiene le informazioni relative al task [task-id]\\ \hline
+/task/result/[task-id] & Ottiene il risultato del task [task-id]\\ \hline
+\end{tabular}
+\caption{URL REST del servizio di monitoraggio}
+\label{tab:monitoring urls}
+\end{table}
+\subsection{Il gestore degli eventi} %websocket
+\begin{table}[h]
+\centering
+\begin{tabular}{| m{4.4cm}| m{5cm} | }
+\hline
+\textbf{URL} & \textbf{Descrizione} \\ \hline
+/task/events/task-received/[task-id] & L'evento viene inviato alla ricezione di un task\\ \hline
+/task/events/task-started/[task-id] & L'evento viene inviato all'avvio di un task\\ \hline
+/task/events/task-succeeded/[task-id] & L'evento viene inviato al termine di un task\\ \hline
+/task/events/task-failed/[task-id]  & L'evento viene inviato al termine di un task\\ \hline
+/task/events/task-revoked/[task-id] & L'evento viene inviato alla revoca di un task\\ \hline
+/task/events/task-retried/[task-id] & L'evento viene inviato alla ripetizione di un task\\ \hline
+\end{tabular}
+\caption{URL REST del gestore di eventi}
+\label{tab:events urls}
+\end{table}
+\subsubsection{Esempio di ricezione degli eventi con websocket}
+\begin{html}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Esempio di ricezione degli eventi</title>
+        <meta charset="utf-8 />
+        <script type="application/javascript">
+            var socket = new WebSocket('ws://testagent:8080/task/events/task-received/')
+            socket.onmessage = function(e) {
+                var result = document.getElementById("result");
+                var text = document.createElement('span');
+                text.innerText = event,data;
+                result.appendChild(text);
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Esempio di gestione di un evento alla ricezione di un task</h1>
+        <div id="result"></div>
+    </body>
+</html>
+\end{html}
+\subsection{Sicurezza}
+
+\section{Il worker}
+\subsection{Backend con Redis}
+\subsection{Client per il worker}
+\begin{python}
+from testagent.services.WorkerService import WorkerService, WorkerServiceException
+from tornado.options import options
+from tornado.options import parse_command_line, parse_config_file
+from testagent.options import DEFAULT_CONFIG_FILE
+from testagent.subscription_options import DEFAULT_SUBSCRIPTION_FILE
+from celery import Celery
+import fileinput
+parse_config_file(options.conf, final=False)
+parse_config_file(options.subscription_conf, final=False)
+app = Celery()
+WorkerService().configure(app, options)
+from testagent.tasks import start_certification
+xml = ""
+for line in fileinput.input():
+    xml = xml + line 
+print xml
+result = start_certification.delay(xml)
+result.get()
+\end{python}
+
+\section{Posizionamento nel framework CUMULUS}
+
+
+\section{Installazione e configurazione}
+\section{Cloud-based TA: Open Stack}
+\section{Bare-metal TA: Raspberry PI}
+\subsection{Deploy manuale del Test Agent}
+\subsubsection{Unit file per SystemD}
+\subsection{Configurazione del Test Agent}
+
+\section{Scrivere una probe}

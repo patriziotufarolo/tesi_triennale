@@ -1,0 +1,43 @@
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{celeste}{HTML}{00B4CE}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+ 
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttfamily\scriptsize,
+breaklines=true,
+tabsize=4,
+numbers=left,
+numberstyle=\ttfamily\scriptsize,
+otherkeywords={self},            % Add keywords here
+keywordstyle=\ttfamily\scriptsize\color{darkblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttfamily\scriptsize\color{deepred},    % Custom highlighting style
+commentstyle=\color{mymauve},
+procnamekeys={def,class},
+stringstyle=\color{mygreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false            % 
+}}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
