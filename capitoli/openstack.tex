@@ -113,10 +113,72 @@ Le connessioni alla console, sia che siano fatte in modo diretto, sia attraverso
 \end{figure}
 
 \subsection{Image service: Glance}
+\textit{Glance} si occupa della conservazione e la registrazione delle immagini di base per istanziare nuove macchine virtuali.
+Il servizio espone un'interfaccia REST che consente di:
+\begin{itemize}
+\item reperire i metadati relativi a un'immagine
+\item caricare una nuova immagine, e registrare i relativi metadati
+\item scaricare un'immagine in locale
+\end{itemize}
+Glance fornisce la possibilità di memorizzare le immagini in varie locazioni. Esse possono infatti essere dei semplici file sul disco fisso del nodo su cui Glance è stato eseguito, oppure altri tipi di storage come Swift (il servizio di object-storage).
+Esso è scritto secondo i seguenti principi:
+\begin{itemize}
+\item Architettura componibile
+\item Alta disponibilità e scalabilità
+\item Tolleranza ai guasti
+\item Recuperabilità
+\item Utilizzo di tecnologie standard aperte
+\end{itemize}
 
 \subsection{Networking service: Neutron}
+\textit{Neutron} è il componente di OpenStack che offre il servizio di "networking as a service" per le macchine virtuali, effettuando un'astrazione del livello di rete.
+Lo scopo è principalmente quello di fornire delle API per strutturare la rete in modo avanzato e costruire topologie complesse, dotate di politiche di networking eterogenee.
+Affinché ciò possa avvenire, Neutron fa uso di tecnologie di software-defined networking, come OpenFlow e Open-vSwitch, incapsulando il traffico con varie tecnologie di tunneling come VXLAN e GRE.
+E' strutturato su un'architettura totalmente componibile tramite plug-in, che possono essere sia open-source che proprietari, i quali forniscono le modalità per amministrare in modo efficiente le capabilities di rete.
+La filosofia è quindi quella di implementare l'approccio \textit{as-a-service} anche per il livello di rete, al fine di fornire le seguenti funzionalità:
+\begin{itemize}
+\item Load balancer-aaS
+\item VPN\footnote{Virtual Private Network}-aaS
+\item Firewall-aaS
+\item IDS-aaS
+\item etc.
+\end{itemize}
+Un'altra funzionalità introdotta da Neutron, è quella di creare molteplici reti virtuali e di garantire la tenancy isolation agendo direttamente sul livello 2 dello stack ISO/OSI
+Le API forniscono inoltre numerosi livelli di controllo per:
+\begin{itemize}
+\item Politiche di sicurezza e \textit{compliance}
+\item Qualità del servizio
+\item Monitoraggio e risoluzione dei problemi
+\end{itemize}
+
+%http://www.slideshare.net/danwent/openstack-quantum-intro-os-meetup-32612
+
+\begin{table}[h]
+\centering
+\begin{tabular}{| m{3cm}| m{5cm} | m{5cm} | }
+\hline
+& \textbf{Nova} & \textbf{Neutron} \\ \hline
+\textit{*-as-a-service} & Compute & Network \\ \hline
+\textit{Livello di astrazione} & \textbf{server virtuali}, rappresentano host con una CPU, della RAM, dischi, e interfacce di rete & \textbf{reti virtuali}: segmenti di livello 2, \textbf{porte virtuali}: punti di aggancio per i dispositivi connessi alle reti virtuali \\ \hline
+\textit{Tecnologie di backend supportate} & libvirt per KVM, XenServer, Hyper-V, vMware ESX & Open vSwitch, Cisco UCS, Linux Bridge \\ \hline
+\textit{Espandibilità delle API} & \textit{keypair}, ripristino delle istanze, volumi, etc. & \textit{QoS}, statistiche sulle porte, \textit{security groups}, etc. \\ \hline
+
+\end{tabular}
+\caption{Analogie tra Neutron e Nova}
+\label{tab:AnalogiesNeutronNova}
+\end{table}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{immagini/neutronNova.jpg}
+}
+\caption{\cite{NeutronNova}}\label{NeutronNova}
+\end{figure}
+
 \subsection{Object-storage service: Swift}
+
 \subsection{Block-storage service: Cinder}
+
 \subsection{Altri servizi} 
 \subsubsection{Database service: Trove}
 \subsubsection{Orchestration service: Heat}
