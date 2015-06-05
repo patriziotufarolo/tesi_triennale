@@ -23,7 +23,7 @@ La comunità  OpenStack ha comunque identificato una serie componenti che costit
 \caption{Struttura della Piattaforma Openstack\cite{openstacksoftware}}\label{openstacksw}
 \end{figure}
 \subsection{Identity service: Keystone}
-Keystone è il componente di service-catalog, che si occupa anche di fornire i servizi di gestione delle identità, dei token e delle politiche per l'uso specifico dei progetti nella famiglia OpenStack.
+\textit{Keystone} è il componente di service-catalog, che si occupa anche di fornire i servizi di gestione delle identità, dei token e delle politiche per l'uso specifico dei progetti nella famiglia OpenStack.
 E' l'implementazione della Identity API, e ha funzionalità di autenticazione basata su token (authN) e meccanismi di autorizzazione di alto livello (authZ).
 E' stato recentemente ristrutturato per essere espandibile e supportare meccanismi AuthN/AuthZ come oAuth, SAML, e openID.
 Nella pratica, si occupa di validare le credenziali degli utenti e dei servizi, rilasciare e gestire i token di autenticazione dopo la verifica delle credenziali, e di gestire il catalogo dei servizi tenendo traccia dei relativi endpoint e i livelli di autorizzazione ad essi associati.
@@ -63,15 +63,63 @@ Il token è legato alla lista dei ruoli dell'utente o servizio a cui si riferisc
 \end{figure}
 
 \subsection{Compute service: Nova}
+\textit{Nova} è il componente che si occupa di gestire la parte di Compute di OpenStack. La sua architettura è progettata in un'ottica di scalabilità orizzontale e poggia le sue basi sulle tecnologie di virtualizzazione note. Come hypervisor di backend, infatti, può fare uso di KVM, Xen Server, VMware ed altri.
+Le sue funzionalità sono suddivise in vari servizi:
+\begin{itemize}
+\item \textbf{nova-api}: servizio che si occupa di gestire le richieste di allocazione e gestione delle risorse computazionali effettuate dagli utenti.
+Costituisce il cuore dell'interno framework e fornisce la possibilità di controllare l'hypervisor, lo storage e le funzionalità di rete.
+Gli endpoint sono servizi HTTP che gestiscono le varie funzioni utilizzando vari tipi di interfaccia (Amazon, Rackspace) e i relativi modelli. Ciò permette alle API di interagire con strumenti già esistenti creati da altri provider.
+In un'architettura multi-nodo questo servizio viene installato ed eseguito sul nodo \textit{Controller}.
+\item \textbf{nova-scheduler}: si occupa di effettuare lo scheduling delle operazioni invocate da nova-api. Funziona per mezzo di una coda, ed è in grado di individuare il nodo di Compute sul quale deve essere effettuato il deploy delle varie istanze virtuali. Aggiunge dunque un livello di astrazione al fine di consentire la scalabilità orizzontale. Anche questo servizio, nel caso di setup multi-nodo, viene eseguito sul nodo \textit{Controller}.
+\item \textbf{Coda di messaggi}, attraverso la quale è orchestrata l'interazione tra i nodi di compute, il controller di rete, le API, lo scheduler e gli altri componenti.
+I vari worker leggono cosantemente la coda in base al loro ruolo o, per esigenze specifiche, al loro hostname.
+Quando arriva un task sulla coda, il worker ad esso demandato lo esegue e rimanda indietro la risposta, portando il feedback all'utente o servizio che ha generato la richiesta iniziale.
+\item \textbf{nova-compute}: è un worker che interagisce con le API dell'hypervisor per creare, eliminare, modificare le varie istanze e le risorse ad esse assegnate. Questo servizio viene generalmente eseguito sullo stesso nodo dell'hypervisor.
+Si occupa di:
+\begin{itemize}
+\item Avviare istanze
+\item Terminare istanze
+\item Riavviare istanze
+\item Agganciare un volume a un'istanza
+\item Sganciare un volume da un'istanza
+\item Ottenere l'output della console
+\end{itemize}
+\item \textbf{nova-network}: è il controller di rete. Si occupa principalmente di amministrare le risorse di rete sui vari host. Si occupa di:
+\begin{itemize}
+\item Allocare indirizzi IP fissi
+\item Configurare le VLAN dei vari progetti o tenant
+\item Configurare la rete sui nodi di compute
+\end{itemize}
+Nelle release più recenti di Openstack, \textit{nova-network} è stato sostituito da un servizio dedicato: \textit{neutron}.
+\item \textbf{nova-rootwrap}: consente di interagire con le API dell'hypervisor in modo sicuro, senza essere \textit{root} sulla macchina dell'hypervisor, sostituendo il comando \textit{sudo}.
+\item \textbf{nova-consoleauth, nova-novncproxy, nova-xvpvncproxy}: si occupano di fornire l'accesso KVM\footnote{Keyboard, Video, Mouse} per le macchine virtuali. Solitamente, affinché ciò possa avvenire, sono utilizzati protocolli di desktop remoto come VNC, Spice, o RDP, a seconda di quanto supportato dall'hypervisor.
+Il deploy di questi servizi avviene generalmente in questo modo
+\begin{itemize}
+\item Un processo \textit{nova-consoleauth} sul nodo controller.
+\item Un processo \textit{nova-novncproxy} o \textit{nova-xvpvncproxy} sullo stesso nodo delle \textit{nova-api} (spesso nodo Controller). La differenza tra i due, è che il primo fa uso di un client basato su HTML5, mentre l'altro sfrutta la tecnologia Java. 
+\end{itemize}
+Le connessioni alla console, sia che siano fatte in modo diretto, sia attraverso un proxy, passano attraverso le porte TCP comprese tra 5900 e 5999. Il firewall di ogni nodo di compute deve perciò avere la seguente regola:
+\begin{python}
+-A INPUT -p tcp -m multiport --dports 5900:5999 -j ACCEPT
+\end{python}
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{immagini/nova.png}
+}
+\caption{Diagramma funzionale di Nova\cite{openstacknova}}\label{openstacknova}
+\end{figure}
+
 \subsection{Image service: Glance}
-\subsection{Networking service}
-\subsubsection{Nova-network}
-\subsubsection{Neutron}
+
+\subsection{Networking service: Neutron}
 \subsection{Object-storage service: Swift}
 \subsection{Block-storage service: Cinder}
-\subsection{Orchestration service: Heat}
 \subsection{Altri servizi} 
 \subsubsection{Database service: Trove}
+\subsubsection{Orchestration service: Heat}
 \subsubsection{Bare-metal service: Ironic}
 \subsubsection{Data-processing service: Sahara}
 \subsubsection{Messaging service: Zaqar}
@@ -86,9 +134,8 @@ Il token è legato alla lista dei ruoli dell'utente o servizio a cui si riferisc
 \section{Servizi di supporto}
 \subsection{Dashboard: Horizon}
 \subsection{Telemetry-service: Ceilometer}
-\subsection{Deployment: TripleO}
-\subsection{Command-line client}
 \subsection{Benchmark-service: Rally}
+\subsection{API Testing: Tempest}
 \section{Deploy di OpenStack con DevStack}
 \subsection{Devstack e SSL}
 \section{Sicurezza e certificazione di OpenStack}
