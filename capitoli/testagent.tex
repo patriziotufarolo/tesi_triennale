@@ -154,7 +154,7 @@ Il TLS Record Protocol può essere usato anche senza cifratura.
 \end{itemize}
 Il TLS Record Protocol è usato per l'incapsulazione di vari protocolli di livello più alto. Uno di questi protocolli incapsulati, il TLS Handshake Protocol, permette al server e al client di autenticarsi reciprocamente e di negoziare l'algoritmo di cifratura e le chiavi crittografiche prima che il protocollo applicativo trasmetta o riceva il suo primo byte di dati. Il TLS Handshake Protocol fornisce una connessione sicura che gode di tre principali proprietà:
 \begin{itemize}
-\item L'identità di un Peer può essere autenticata usando la crittografia simmetrica o a chiave pubblica (RSA, DSA, DSS, ecc.) L'autenticazione può essere opzionale, ma generalmente è richiesta da almeno uno dei due peer.
+\item L'identità di un peer può essere autenticata usando la crittografia simmetrica o a chiave pubblica (RSA, DSA, DSS, ecc.) L'autenticazione può essere opzionale, ma generalmente è richiesta da almeno uno dei due peer.
 \item La negoziazione del segreto condiviso è sicura: il segreto negoziato non è disponibile agli eavesdroppers, e per ogni connessione autenticata il segreto non può essere ottenuto, nemmeno nel caso di un attacco man-in-the-middle.
 \item La connessione è affidabile: nessun attaccante può modificare la comunicazione di negoziazione senza essere scoperto dalle parti coinvolte.
 \end{itemize}
