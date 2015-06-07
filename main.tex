@@ -7,6 +7,15 @@
 \usepackage{quoting}
 \usepackage{csquotes}
 \usepackage{xcolor}
+\usepackage{fancyhdr}
+
+\frontmatter
+\pagestyle{plain}
+
+\mainmatter
+\pagestyle{fancy}
+\fancyhead[LE,RO]{\itshape \nouppercase \rightmark}
+\fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
 
 \quotingsetup{font=small}
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold

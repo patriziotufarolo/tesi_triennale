@@ -218,7 +218,7 @@ Inoltre, poiché la difficoltà di gestione delle chiavi è notevole, bisogna se
 
 \subparagraph{Integrità}
 La confidenzialità dei dati non implica la loro integrità. La crittografia del dato, di per sé, non basta a verificare che il dato non sia stato manomesso.
-Per questo fine si utilizzano i MAC\footnote{Message Authentication Code}. Il modo più semplice per usare i MAC è tramite cifratura simmetrica in modalità CBC\footnote{Cipher Block Chaining} per poi passare il dato crittografato a una funziona hash one-way. 
+Per questo fine si utilizzano i MAC\footnote{Message Authentication Code}. Il modo più semplice per usare i MAC è tramite cifratura simmetrica in modalità CBC\footnote{Cipher Block Chaining} per poi passare il dato crittografato a una funzione hash one-way. 
 Il problema fondamentale del mantenimento dell'integrità dei dati sul cloud, è quello della verifica.\cite{CloudSecurityBook}
 Per effettuare un controllo di integrità il cliente dovrebbe scaricare i dati in locale, verificarne l'integrità e ricaricare i dati sul cloud provider. Ciò, specialmente in caso di grandi moli di dati, può tradursi in un aumento spropositato dei costi, soprattutto in termini di banda e di utilizzo della rete.
 Oltretutto spesso questi dati sono utilizzati dalle applicazioni cloud, e quindi cambiano frequentemente e velocemente.\cite{CloudSecurityBook}
@@ -231,6 +231,7 @@ Riguardo a ciò ci sono tre minacce principali:
 \item Disponibilità e uptime del provider
 \item Non sempre viene fatto il backup dei dati
 \end{itemize}
+La disponibilità del dato viene garantita tramite la diffusione dello stesso su più località geografiche. Non sempre il fornitore del servizio garantisce questa funzionalità, ma qualora fosse stabilita a livello di Service Level Agreement l'utente finale potrebbe contattare direttamente il server a lui geograficamente più vicino, con gli evidenti benefici sui tempi di latenza.
 
 \subsection {La sicurezza nel Service Level Agreement}
 Grazie al documento \cite{CloudSecurityIssues} possiamo inoltre identificare i punti che un contratto di SLA deve sempre specificare:
@@ -239,7 +240,7 @@ Grazie al documento \cite{CloudSecurityIssues} possiamo inoltre identificare i p
 \item \textbf{Politica di gestione degli incidenti}, il cui scopo è quello di minimizzare l'impatto di eventuali incidenti informatici o problematiche del servizio.
 \item \textbf{Doveri e responsabilità del cliente}
 \item \textbf{Garanzie e rimedi}
-\item \textbf{Poltiche di disaster recovery e continuità di business}
+\item \textbf{Politiche di disaster recovery e continuità di business}
 \item \textbf{Politiche e meccanismi di sicurezza}, in particolar modo:
 \begin{itemize}
 \item \textit{Accesso privilegiato alle risorse}: l'attività di elaborazione dei dati parzialmente incontrollata rispetto all'impresa che usufruisce dei dati, porta con se un elevato livello di rischio, poiché i servizi in outsourcing spesso evitano i tradizionali controlli che i processi di business impongono.
