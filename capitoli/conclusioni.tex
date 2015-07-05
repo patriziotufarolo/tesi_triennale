@@ -1,3 +1,31 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
 \chapter*{Conclusioni}
-\addcontentsline{toc}{chapter}{Conclusioni}
-\chaptermark{Conclusioni}
+\addcontentsline{toc}{chapter}{Conclusioni e sviluppi futuri}
+\chaptermark{Conclusioni e sviluppi futuri}
+
+In questo lavoro di tesi è stata definita un'architettura di certificazione, adatta allo schema CUMULUS, che consiste di un Test Manager (l'orchestratore del processo di certificazione) e di più sonde in grado di eseguire le operazioni e le verifiche necessarie alla validazione del sistema target.
+
+\`E stata fornita l'implementazione di una sonda di testing, un componente software scalabile e orientato all'esecuzione parallela e schedulata di test, che può essere utilizzato per la certificazione dei servizi a tutti i livelli dello stack cloud (\textit{Infrastructure as a Service}, \textit{Platform as a Service}, \textit{Software as a Service}).
+Ciò ha reso necessaria l'esigenza di formalizzare il concetto di \textit{driver di sonda}, che costituisce la base operativa per altri lavori inerenti il framework CUMULUS.
+
+Inoltre sono state definite delle specifiche implementative per il meccanismo di comunicazione tra Test Manager e sonde, basato su code basate sul protocollo AMQP (gestite dal software RabbitMQ) e sul software syslog per la gestione centralizzata delle evidenze generate dai test.
+
+\`E stato predisposto un metodo automatico per il deployment della sonda sui prodotti di virtualizzazione KVM (su OpenStack) e Oracle VirtualBox, ed è stata implementata una sonda bare-metal da collegare a livello fisico all'infrastruttura, basata su Raspberry PI.
+
+Infine, è stata effettuata la validazione del lavoro svolto utilizzando il framework proposto per la certificazione dell'\textit{infrastructure manager}  OpenStack, tenendo conto dei costi di deployment dei componenti e dei driver di sonda sviluppati.
+
+A partire dal presente lavoro di tesi sono già stati sviluppati dei \textit{driver di sonda} anche per servizi a livello di piattaforma (ad es., Cloud Foundry, sul quale si è focalizzato il lavoro di tesi di Daniele Romano) e di applicazione (ad es. Wellness Welight, per cui è stato da me realizzato uno specifico test di confidenzialità, utilizzato nella review anno 2 di CUMULUS).
+
+\section{Sviluppi futuri}
+Il progetto lascia spazio a numerosi sviluppi futuri, sia di perfezionamento del componente realizzato (che può essere visto come un agente general purpose), che di integrazione dello stesso con altri framework con esigenze analoghe.
+In particolare, si mira a fornire un'implementazione modulare e basata su \textit{plugin} per la gestione dei driver di sonda, in modo che possano essere utilizzati sia come componenti \textit{standalone} che come estensioni della sonda sviluppata, così da favorirne la pacchettizzazione e i meccanismi di distribuzione tramite canali sicuri.
+
+Il deployment \textit{bare-metal} della sonda consente di usufruire di tecnologie di sicurezza per il mantenimento dell'integrità e della confidenzialità dei dati implementate in hardware (es. \textit{Trusted Computing con Trusted Platform Module}).
+Un possibile sviluppo sotto questo aspetto potrebbe essere l'implementazione del framework discusso in un componente hardware \textit{fully embedded}, sul quale effettuare il deploy della sonda, allestita dall'\textit{Accredited Lab} in modalità self-assessment e di una versione minimale del Test Manager, per l'esecuzione \textit{on-the-fly} del processo di certificazione, al fine di limitare l'approccio invasivo del framework su sistemi cloud in produzione.
+
+A partire dal lavoro svolto, si potrebbe realizzare un modello quantitativo per valutare l'impatto dell'architettura di certificazione proposta su sistemi cloud in produzione, tenendo conto dei costi di deployment, dell'accettabilità del framework e dell'effettivo valore aggiunto dato dal certificato emesso.
+
+Infine, l'analisi di sicurezza della piattaforma OpenStack costituisce un punto di partenza per lo sviluppo di ulteriori progetti di certificazione.
+\end{document}
+

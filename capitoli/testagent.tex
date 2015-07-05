@@ -1,33 +1,26 @@
-\chapter{Test Agent}
-\section*{Introduzione}
-Il Test Agent è uno dei componenti fondamentali del framework CUMULUS. La sua responsabilità è quella di effettuare i test sul ToC.
-Il suo compito è essenzialmente quello di:
-\begin{enumerate}[nolistsep]
-\item Ricevere informazioni sui Collector da eseguire
-\item Effettuare il dispatching del Probe Driver sulle varie CPU della macchina su cui è stato avviato
-\item Collezionare le evidenze raccolte durante l'esecuzione dei test
-\item Effettuare il reporting in base al risultato dei test ad esso commissionati
-\end{enumerate}
-Sono state poi previste ulteriori funzionalità corollarie, utili ad esempio per supportare diverse topologie e configurazioni.
-Lo scopo di questo capitolo vuole perciò essere quello di descrivere dettagliatamente il funzionamento di questo componente e di fornire la documentazione per il deployment nei casi d'uso più comuni.
-\section{Componenti del Test Agent}
-Le tecnologie e i componenti che sono stati utilizzati per la realizzazione del Test Agent sono:
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Implementazione della sonda}
+Dopo aver illustrato le caratteristiche tecniche della sonda, si intende offrire una visione più introspettiva sull'implementazione dei componenti illustrati nel capitolo precedente.
+
+\section{Tecnologie utilizzate}
+Le tecnologie e i componenti che sono stati utilizzati per la realizzazione della sonda sono:
 \newline
 \begin{description}[nolistsep]
 \item[Python 2.7]
 Python è un linguaggio di scripting e programmazione multi paradigma, molto diffuso in ambito sistemistico.
-E' comunemente usato per sviluppare applicazioni distribuite, di computazione numerica ed effettuare system testing, grazie all'elevato numero di librerie disponibili nel PyPI\footnote{Python Package Index - \textit{http://pypi.python.org/}}.
-E' sviluppato sotto una licenza open source - approvata dalla Open Source Initiative\footnote{Associazione globale no-profit improntata sulla promozione e la protezione del software open-source (software a sorgente aperto, che può essere usato, modificato e condiviso da chiunque). - \textit{http://www.opensource.org}} - che permette di usarlo e distribuirlo liberamente anche per uso commerciale.
+\`E comunemente usato per sviluppare applicazioni distribuite, di computazione numerica ed effettuare system testing, grazie all'elevato numero di librerie disponibili nel PyPI\footnote{Python Package Index - \textit{http://pypi.python.org/}}.
+\`E sviluppato sotto una licenza open source - approvata dalla Open Source Initiative\footnote{Associazione globale no-profit improntata sulla promozione e la protezione del software open-source (software a sorgente aperto, che può essere usato, modificato e condiviso da chiunque). - \textit{http://www.opensource.org}} - che permette di usarlo e distribuirlo liberamente anche per uso commerciale.
 \newline La licenza di Python è amministrata dalla Python Software Foundation
 \footnote{Compagnia no-profit che detiene la proprietà intellettuale sul linguaggio di programmazione Python - \textit{http://www.python.org/psf}}
-\cite{PythonWebsite}
+\cite{PythonWebsite}.
 \newline
-Il Test Agent è stato scritto in Python 2.7, utilizzando i paradigmi OOP\footnote{Object Oriented Programming - è un modello di linguaggio di programmazione organizzato attorno al concetto di "oggetti" invece di "azioni" e "dati" invece di "logica" - \textit{http://searchsoa.techtarget.com/definition/object-oriented-programming}.} e AOP\footnote{Aspect Oriented Programming - è un approccio alla programmazione che permette di definire le proprietà globali di un software per determinare con precisione come verrà compilato in eseguibile. Un aspetto è un sottoprogramma che viene associato a una specifica proprietà del programma principale - \textit{http://whatis.techtarget.com/definition/aspect-oriented-programming-AOP} }.
+La sonda è stata scriita in Python 2.7, utilizzando i paradigmi OOP\footnote{Object Oriented Programming - è un modello di linguaggio di programmazione organizzato attorno al concetto di "oggetti" invece di "azioni" e "dati" invece di "logica" - \textit{http://searchsoa.techtarget.com/definition/object-oriented-programming}.} e AOP\footnote{Aspect Oriented Programming - è un approccio alla programmazione che permette di definire le proprietà globali di un software per determinare con precisione come verrà compilato in eseguibile. Un aspetto è un sottoprogramma che viene associato a una specifica proprietà del programma principale - \textit{http://whatis.techtarget.com/definition/aspect-oriented-programming-AOP} }.
 \newline
 
 \item[RabbitMQ]
 RabbitMQ è un broker di messaggistica, un middleware per la comunicazione inter-processo distribuita. 
-Fornisce alle applicazioni una piattaforma comune per inviare e ricevere messaggi, e ai messaggi stessi un posto sicuro dove permanere in attesa dell'acknowledgement di avvenuta ricezione.\cite{RabbitMQWebsite} Offre:
+Fornisce alle applicazioni una piattaforma comune per inviare e ricevere messaggi e ai messaggi stessi un posto sicuro dove permanere in attesa dell'acknowledgement di avvenuta ricezione \cite{RabbitMQWebsite}. Offre:
 \begin{description}
 \item[Affidabilità]Distribuzione del carico per architetture high-availability, acknowledgement di avvenuta ricezione, persistenza, conferma di pubblicazione, 
 \item[Instradamento flessibile]I messaggi sono instradati negli Exchange prima di arrivare nelle code di consumazione. RabbitMQ offre alcuni tipi di Exchange integrati per gli scenari di routing più comuni. Per esigenze più complesse è possibile aggregare più Exchange oppure progettare il proprio Exchange implementandolo come plugin.
@@ -36,24 +29,24 @@ Inoltre le stesse code possono essere configurate in mirroring su diverse macchi
 \item[Federazione]
 \item[Multi-protocollo]Supporto a molti protocolli di messaggistica.
 \end{description}
+Ai fini della realizzazione della sonda è stato implementato il protocollo AMQP con RabbitMQ.
 
-Ai fini della realizzazione del Test Agent è stato implementato il protocollo AMQP.
-\newline
-\item[Redis]Redis è un sistema di storage e caching chiave-valore, open-source, rilasciato sotto licenza BSD. Spesso ci si riferisce a Redis come un servizio per memorizzare dati strutturati, in quanto le chiavi possono contenere stringhe, hashes, liste, insiemi, insiemi ordinati, bitmap e HyperLogLogs.\cite{RedisWebsite}\newline
-Nel Test Agent il ruolo operato da Redis è quello di broker di backend, per memorizzare lo stato dei task eseguiti dal worker Celery - di cui si discuterà in seguito - e i relativi metadati.
+\item[Redis]Redis è un sistema di storage e caching chiave-valore, open-source, rilasciato sotto licenza BSD. Spesso ci si riferisce a Redis come un servizio per memorizzare dati strutturati, in quanto le chiavi possono contenere stringhe, hashes, liste, insiemi, insiemi ordinati, bitmap e HyperLogLogs \cite{RedisWebsite}.\newline
+Nella sonda il ruolo operato da Redis è quello di broker di backend, per memorizzare lo stato dei task eseguiti dal worker Celery - di cui si discuterà in seguito - e i relativi metadati.
+Per maggiori informazioni fare riferimento alla documentazione di Celery.
 \item[Tornado]
 Tornado è un web-framework e una libreria di networking asincrono per Python, originariamente sviluppata presso FriendFeed.
-Mediante l'uso di un paradigma non bloccante per la gestione delle funzioni di networking, si presenta come un prodotto molto adatto alla scalabilità, capace quindi di gestire decine di migliaia di connessioni aperte in contemporanea. Ciò lo rende adatto ad applicazioni di long-polling, WebSocket, e altre applicazioni che richiedono connessioni long-live con ogni utente.\cite{TornadoWebsite}\newline
-E' stato utilizzato Tornado per realizzare le API di sottoscrizione del Test Agent rispetto al Test Manager, e le API di monitoraggio del Test Agent.
+Mediante l'uso di un paradigma non bloccante per la gestione delle funzioni di networking, si presenta come un prodotto molto adatto alla scalabilità, capace quindi di gestire decine di migliaia di connessioni aperte in contemporanea. Ciò lo rende adatto ad applicazioni di long-polling, WebSocket e altre applicazioni che richiedono connessioni long-live con ogni utente \cite{TornadoWebsite}.\newline
+\`E stato utilizzato Tornado per realizzare le API di Subscription e le API di monitoraggio.
 \item[Celery]
-Celery è un gestore di code di processi/lavori basato sul passaggio di messaggi. Il suo sviluppo è stato concentrato sull'esecuzione di processi real-time, ma vanta anche feature di schedulazione.
+Celery è un gestore di code di processi/lavori basato sul passaggio di messaggi. Il suo sviluppo è stato concentrato sull'esecuzione di processi real-time, ma vanta anche feature di schedulazione e costituisce il componente \textit{core} della sonda.
 Le unità di esecuzione, tasks, sono eseguite parallelamente su uno o più worker utilizzando le librerie multiprocessing, eventlet o gevent.
 I tasks possono essere eseguiti in modo asincrono (in background) o in modo sincrono (wait-until-ready).
 Per fare ciò Celery usufruisce principalmente di due librerie:
 \begin{itemize}[nolistsep]
-\item Billiard - E' un fork della libreria multiprocessing di Python, la quale a sua volta è una versione aggiornata e rinominata del pacchetto pyprocessing sviluppato da R Oudkerk.
+\item Billiard - \`E un fork della libreria multiprocessing di Python, la quale a sua volta è una versione aggiornata e rinominata del pacchetto pyprocessing sviluppato da R Oudkerk.
 Billiard è stato creato per garantire la compatibilità con Python 2.4 e Python 2.5, senza rinunciare agli aggiornamenti e alle fix del canale principale python-trunk.
-\item Kombu - E' una libreria di messaggistica per Python. Il suo obiettivo è quello di semplificare la messaggistica il più possibile, fornendo, oltre a un'interfaccia di alto livello idiomatica per il protocollo AMQ, una serie di soluzioni ampiamente collaudate per la risoluzione dei problemi tipici riguardanti la messaggistica.
+\item Kombu - \`E una libreria di messaggistica per Python. Il suo obiettivo è quello di semplificare la messaggistica il più possibile, fornendo, oltre a un'interfaccia di alto livello idiomatica per il protocollo AMQ, una serie di soluzioni ampiamente collaudate per la risoluzione dei problemi tipici riguardanti la messaggistica.
 \newline\newline
 \textbf{Esempio di pubblicazione su una coda:}
 publisher.py:
@@ -80,91 +73,111 @@ with Connection('amqp://user:pass@host:5672//') as conn:
     example_queue.close()
 \end{python}
 \end{itemize}
-Celery costituisce il core operativo del Test Agent.
 \item[lxml Toolkit]Il toolkit XML è un binding per Python delle librerie C libxml2 e libxslt. Combina la velocità e la completezza di feature per il parsing e il factoring dell'XML con la semplicità di un'API Python nativa, fornendo compatibilità con la più nota libreria ElementTree.
 \newline
-Nel Test Agent si occupa di effettuare il parsing dei messaggi.
+Nella sonda si occupa di effettuare il parsing dei Collector.
 \item[QEMU]QEMU è un emulatore di architetture e motore di virtualizzazione generico, rilasciato con licenza open-source. Quando usato come emulatore, può eseguire sistemi operativi e applicazioni progettati per un'architettura su un'altra differente (es. emulazione dell'architettura ARM su PC x86). Le performance sono garantite tramite la traduzione dinamica delle istruzioni.
 Quando utilizzato come motore di virtualizzazione, QEMU raggiunge performance molto vicine a quelle di un'esecuzione nativa, eseguendo il codice del sistema ospite direttamente sulla CPU del sistema ospitante. QEMU supporta la virtualizzazione tramite l'hypervisor XEN oppure mediante il modulo KVM di Linux. Usando KVM, può virtualizzare le architetture x86, PowerPC (sia server che embedded) e S390.
 \newline
 Nell'ambito del progetto è stato utilizzato per realizzare un'immagine di macchina virtuale pronta per il deploy sul cloud.
 \item[Systemd]
-Systemd è un gestore del sistema e dei servizi per i sistemi operativi Linux. Il suo design prevede la retrocompatibilità con gli init-scripts SysV, e fornisce funzionalità come l'avvio parallelo dei servizi di sistema al boot, l'attivazione on-demand dei demoni, il supporto dello snapshotting dello stato del sistema, e una logica del controllo dei servizi basata sulle dipendenze.
-Introduce inoltre il concetto di Units (unità). Esse sono rappresentate da un file di configurazione, e contengono le informazioni a proposito dei servizi di sistema, le socket in ascolto, gli snapshot salvati e altro oggetti rilevanti per il sistema di init.
+Systemd è un gestore del sistema e dei servizi per i sistemi operativi Linux. Il suo design prevede la retrocompatibilità con gli init-scripts SysV e fornisce funzionalità come l'avvio parallelo dei servizi di sistema al boot, l'attivazione on-demand dei demoni, il supporto dello snapshotting dello stato del sistema e una logica del controllo dei servizi basata sulle dipendenze.
+Introduce inoltre il concetto di Units (unità). Esse sono rappresentate da un file di configurazione e contengono le informazioni a proposito dei servizi di sistema, le socket in ascolto, gli snapshot salvati e altro oggetti rilevanti per il sistema di init.
 \newline
-E' stata realizzata una Unit anche per il Test Agent, affinché sia possibile effettuare attività di monitoraggio e controllo sul servizio. Per integrare il Test Agent con Systemd, è stata utilizzata la libreria python-daemon, in grado di avviare il processo in modo esclusivo generando il rispettivo file PID, contenente l'id del processo associato.
+\`E stata realizzata una Unit per l'avvio del servizio della Sonda. Per integrare la sonda con Systemd, è stata utilizzata la libreria python-daemon, in grado di avviare il processo in modo esclusivo generando il rispettivo file PID, contenente l'id del processo associato.
 \item[Cloud-init]
 Cloud-init è un pacchetto per gestire l'inizializzazione di un'istanza cloud.
 \newline
-E' stato utilizzato per automatizzare la creazione dell'istanza, effettuare l'installazione delle chiavi pubbliche per consentire l'accesso alla macchina virtuale del Test Agent, e per l'upload di eventuali file di configurazione in fase di boot.
+\`E stato utilizzato per automatizzare la creazione dell'istanza, effettuare l'installazione delle chiavi pubbliche per consentire l'accesso alla macchina virtuale della sonda e per l'upload di eventuali file di configurazione in fase di boot.
 \item[Raspberry PI]
-Il Raspberry PI è un computer a basso costo, dalle dimensioni di una carta di credito. E' in grado di svolgere qualunque lavoro ci si aspetterebbe da un normale computer. Ha l'abilità di interagire con il mondo esterno ed è stato utilizzato in un largo insieme di progetti, da music machines a sistemi di motion detection.
+Il Raspberry PI è un computer a basso costo, dalle dimensioni di una carta di credito. \`E in grado di svolgere qualunque lavoro ci si aspetterebbe da un normale computer. Ha l'abilità di interagire con il mondo esterno ed è stato utilizzato in un largo insieme di progetti, da music machines a sistemi di motion detection.
 Il progetto è mantenuto dalla Raspberry Pi Foundation, un'agenzia formativa del regno unito.
 \newline
-Nel lavoro di tesi è stato impiegato per la realizzazione di un Test Agent fisico, per effettuare i test a livello di infrastruttura.
-L'immagine del Test Agent per Raspberry PI è basata sulla distribuzione Pidora.
+Nel lavoro di tesi è stato impiegato per la realizzazione di una sonda \textit{bare-metal}, per effettuare i test a livello di infrastruttura.
+L'immagine della sonda per Raspberry PI è basata sulla distribuzione Pidora.
 \end{description}
 
-\section{Struttura}
-Andiamo ora ad analizzare il funzionamento del Test Agent, esaminandone la struttura e l'organizzazione.
-Il Test Agent è costituito principalmente da quattro moduli:
+\section{Componenti implementati}
+Andiamo ora ad analizzare il funzionamento della, esaminando i componenti implementati e la loro corrispondenza con quanto espresso nel precedente capitolo.
+La sonda è composta da quattro moduli principali:
 \begin{itemize}
-\item Modulo di subscription
-\item APIs
-\item Worker
-\item Modulo di self-assessment
+\item \textit{Modulo di \textit{Subscription}}: implementazione REST del \textit{Subscription Service}. Tramite questo modulo e è possibile inviare le configurazioni per la connessione al canale AMQP.
+\item \textit{Modulo di Monitoraggio}: implementazione REST del \textit{Monitoring Service}. Tramite questo modulo è possibile ottenere informazioni sullo stato globale della sonda.
+\item \textit{Modulo di Self Assessment}: implementa il \textit{Self Assessment module}. Legge le configurazioni di Self Assessment dalla directory
+\textit{/etc/testagent/selfassessment/\textbf{[certification\_model\_id]}/\textbf{[driver\_name.conf]}} dove \textbf{\textit{certification\_model\_id}} indica l'identificativo del \textit{Certification Model} e \textbf{\textit{driver\_name}} indica il nome del driver di sonda corrispondente.
+\item \textit{Modulo Worker}: costituisce il core della sonda e implementa tutto l'\textit{execution flow} descritto.
+\item \textit{Modulo di Logging}: permette di effettuare il logging e la gestione delle evidenze, memorizzando i log sia localmente tramite la libreria Python \textit{logging} che in remoto facendo riferimento a un server \textit{syslog} centralizzato.
 \end{itemize}
-Essi sono implementati seguendo il pattern Singleton, e vengono inizializzati nella fase di bootstrap del software.
-Successivamente a questa fase, viene effettuato il parsing dei file di configurazione e degli argomenti passati tramite riga di comando.
-In seguito viene configurato il servizio di logging, sul quale si appoggiano i componenti, ed essi vengono avviati.
-Il worker viene lanciato soltanto se è stato specificato l'insieme minimo di opzioni necessari alla sua esecuzione. In caso contrario, solamente i servizi di Subscription e API saranno funzionanti.
-In tal caso, dopo aver effettuato la sottoscrizione secondo le modalità descritte nella sottosezione "API di subscription", se persisteranno le condizioni di funzionamento del worker, esso verrà avviato.
+Essi sono stati realizzati seguendo il pattern Singleton e vengono inizializzati nella fase di bootstrap del software.
+
+\paragraph{Pattern Singleton}
+Il \textit{Singleton} è un \textit{design-pattern} creazionale, che garantisce che una determinata classe venga istanziata una e una sola volta.
+Viene di seguito esposta l'implementazione del pattern Singleton utilizzata:
+\begin{python}
+from __future__ import absolute_import
+from functools import wraps
+from testagent.exceptions.SingletonException import SingletonException
+__author__ = 'patrizio'
+
+
+class Singleton(object):
+    _instances = {}
+    _configured = False
+    def __new__(class_, *args, **kwargs):
+        if class_ not in class_._instances:
+            class_._instances[class_] = super(Singleton, class_).__new__(class_, *args, **kwargs)
+        return class_._instances[class_]
+
+    def configure(self):
+        self._configured = True
+
+    def check_configured(self):
+        return self._configured
+
+    @staticmethod
+    def _if_configured(this_exception):
+        if not this_exception or not issubclass(this_exception, SingletonException):
+            this_exception = SingletonException
+
+        def _configured_decorator(func):
+            @wraps(func)
+            def wrapper(inst, *args, **kwargs):
+                if not inst.check_configured():
+                    raise this_exception("Object not configured properly")
+                else:
+                    return func(inst, *args, **kwargs)
+
+            return wrapper
+
+        return _configured_decorator
+        
+class OggettoSingletone(Singletone):
+    pass
+\end{python}
+Ogni volta che l'oggetto \textbf{OggettoSingletone} verrà istanziato, sarà richiamata l'eventuale istanza già esistente (linee 10,11,12,13).
+L'implementazione fornita fornisce inoltre un \textit{decoratore} per la configurazione dei vari moduli. Finché i moduli non sono stati configurati chiamando il metodo \textit{configure}, non sarà possibile eseguire i metodi decorati con \textbf{@\_if\_configured}.
+\newpage
+\section{Bootstrapping della sonda}
+In figura \ref{fig:TestAgent} è raffigurata la fase di avvio della sonda.
+All'avvio vengono inizializzati tutti i moduli Singleton sopra descritti (1).
+Successivamente viene effettuato il parsing dei file di configurazione e degli argomenti passati tramite riga di comando (2) ed essi vengono aggregati in un un'unica configurazione(3). Gli argomenti passati tramite riga di comando hanno più priorità rispetto a quelli specificati nel file di configurazione.
+In base alla configurazione caricata vengono configurati i componenti di Subscription (4), di Monitoraggio (5) e di Logging (6).
+Il componente di Self Assessment, invece, viene configurato in base alle impostazioni specificate in \textit{/etc/testagent/selfassessment/\textbf{cm\_id}/\textbf{\textit{probe\_driver}}.conf} (7).
+Vengono poi avviati i servizi di logging (7), monitoraggio (9) e Subscription (8) caricando la configurazione in \textit{/etc/testagent/subscription/subscription.conf}. Se questa è sufficiente per permettere la connessione del \textit{Worker} a \textit{RabbitMQ}, viene avviato anche il Worker(10), altrimenti sarà necessario inviare la configurazione tramite le APIs. Non appena verrà inviata una configurazione valida, il worker verrà avviato automaticamente.
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{
-\includegraphics[width=\paperwidth]{immagini/testagent1.png}
+\includegraphics[width=\textwidth]{immagini/TestAgent.png}
 }
-\caption{Bootstrapping del Test Agent}\label{fig:testagent}
+\caption{Bootstrapping della sonda}\label{fig:TestAgent}
 \end{figure}
 
-\section{Il protocollo AMQP}
-
-\section{APIs di subscription}
-Il processo di subscription consiste nel fornire al Worker tutte le informazioni necessarie per effettuare la sottoscrizione alle code su cui il Test Manager invia i Collector da eseguire.
-\subsection{Avvio del servizio di Subscription}
-
-\subsubsection{Sicurezza}
-Per rendere sicuro il servizio di Subscription è stato implementato il protocollo HTTP over TLS con Client Authentication.
-Questa feature di HTTPS consente di autenticare sia il server rispetto al client, tramite l'esposizione di un certificato firmato da una Certification Authority fidata, che il client rispetto al server. Per questo motivo è anche chiamata mutua autenticazione.\newline
-Per comprendere meglio il tipo di garanzia che ciò può assicurare è bene citare la relativa RFC (RFC5246).\cite{RFC5246}
-
-Il principale obiettivo del protocollo TLS è quello di fornire privatezza e integrità del dato in due applicazioni comunicanti.
-Esso si compone di due strati:
-\begin{itemize}
-\item TLS Record Protocol
-\item TLS Handshake Protocol
-\end{itemize}
-
-Al livello più basso, situato immediatamente sopra a un protocollo di trasporto affidabile (ad esempio TCP), troviamo il TLS Record Protocol.
-Esso garantisce alla sicurezza della connessione due proprietà fondamentali:
-\begin{itemize}
-\item La connessione è privata (mediante crittografia simmetrica, le cui chiavi sono generate unicamente per ogni connessione e basate su un segreto negoziato da un altro protocollo (ad esempio TLS Handshake Protocol).
-Il TLS Record Protocol può essere usato anche senza cifratura.
-\item La connessione è affidabile. Il trasporto dei messaggi include un controllo di integrità usando un MAC basato su una chiave. Per calcolare il MAC vengono usate funzioni di hashing sicure. Il Record Protocol può essere usato anche senza un MAC, ma generalmente viene usato in questo modo quando un altro protocol sta utilizzando il Record Protocol solo come trasporto per negoziare i propri parametri di sicurezza.
-\end{itemize}
-Il TLS Record Protocol è usato per l'incapsulazione di vari protocolli di livello più alto. Uno di questi protocolli incapsulati, il TLS Handshake Protocol, permette al server e al client di autenticarsi reciprocamente e di negoziare l'algoritmo di cifratura e le chiavi crittografiche prima che il protocollo applicativo trasmetta o riceva il suo primo byte di dati. Il TLS Handshake Protocol fornisce una connessione sicura che gode di tre principali proprietà:
-\begin{itemize}
-\item L'identità di un peer può essere autenticata usando la crittografia simmetrica o a chiave pubblica (RSA, DSA, DSS, ecc.) L'autenticazione può essere opzionale, ma generalmente è richiesta da almeno uno dei due peer.
-\item La negoziazione del segreto condiviso è sicura: il segreto negoziato non è disponibile agli eavesdroppers, e per ogni connessione autenticata il segreto non può essere ottenuto, nemmeno nel caso di un attacco man-in-the-middle.
-\item La connessione è affidabile: nessun attaccante può modificare la comunicazione di negoziazione senza essere scoperto dalle parti coinvolte.
-\end{itemize}
-
-
-
-
-\subsection{Utilizzo del servizio di Subscription}
+\section{APIs di Subscription}
+Le API di subscription consentono di fornire al Worker tutte le informazioni necessarie per effettuare la sottoscrizione alle code su cui il Test Manager deposita i \textit{Collector} da eseguire.
+Le impostazioni di avvio (indirizzo e porta di binding, parametri SSL etc.) devono essere specificati nel file di configurazione della sonda (\textit{/etc/testagent/testagent.conf})
+Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8081.
 Per effettuare la Subscription occorre inviare al servizio una chiamata POST su /.
-I parametri accettati dal servizio di Subscription sono riporati nella Tabella 5.1.
+I parametri accettati dal servizio di Subscription sono riportati nella Tabella 5.1.
 \begin{table}[h]
 \centering
 \begin{tabular}{| m{4.4cm}| m{9cm} | }
@@ -174,7 +187,7 @@ broker\_url & URL del virtual host RabbitMQ nel formato \newline amqp://\{userna
 broker\_ssl\_enable & Valore booleano per abilitare SSL per cifrare la comunicazione con il server Rabbit \\ \hline
 broker\_ssl\_keyfile & Path della chiave privata per l'utilizzo di SSL \\ \hline
 broker\_ssl\_certfile & Path del certificato per l'utilizzo di SSL \\ \hline
-broker\_ssl\_verifycert & Booleano per abilitare l'invio di un certificato per l'autenticazione del client rispetto al broker \\ \hline
+broker\_ssl\_verifycert & Boolean per abilitare l'invio di un certificato per l'autenticazione del client rispetto al broker \\ \hline
 broker\_ssl\_ca & Path del certificato della Certification Authority \\ \hline
 backend\_broker\_url & URL del broker di backend (facoltativo, può \newline essere un'altra connessione AMQP come un\newline database Redis, MongoDB, etc.) \\ \hline
  &  \\ \hline
@@ -191,7 +204,7 @@ results\_routing\_key & results\_queue\_name \\ \hline
 \caption{Parametri di Subscription}
 \label{tab:subscription_parameters}
 \end{table}
-All'invio della POST viene generato un file di configurazione al percorso "subscription\_conf" specificato nella configurazione generale del TestAgent (valore di default: /etc/testagent/subscription.conf) con i dati inviati.
+All'invio della POST viene generato un file di configurazione al percorso "subscription\_conf" specificato nella configurazione generale del sonda (valore di default: /etc/testagent/subscription.conf) con i dati inviati.
 Se è stato fornito l'insieme minimo di parametri richiesti, il Worker viene poi avviato con la nuova configurazione ed inizia a consumare i task.
 Per cambiare le impostazioni di sottoscrizione in un secondo momento, è possibile aggiornare il file inviando una nuova configurazione con il metodo PUT.
 In tal caso il worker verrà prima fermato, attendendo il completamento dei task in esecuzione, poi riavviato con la nuova configurazione.
@@ -199,25 +212,65 @@ Per eliminare la configurazione esistente bisogna inviare una richiesta con meto
 Il worker verrà fermato e verrà riavviato solo quando il servizio di Subscription riceverà una nuova configurazione valida.
 Per motivi di confidenzialità non è previsto il retrieve delle informazioni di comunicazione tramite metodo GET.
 \section{APIs di monitoraggio}
-Le APIs di monitoraggio consentono di ottenere le informazioni sullo stato del Test Agent e dei relativi task.
-\subsection{Avvio delle APIs di monitoraggio}
-Il servizio di monitoraggio è rappresentato da un oggetto Singleton e viene avviato nella fase di bootstrap del Test Agent.
-Le impostazioni di avvio devono essere specificate nel file di configurazione del Test Agent (default: /etc/testagent/testagent.conf)
+Le APIs di monitoraggio consentono di ottenere le informazioni sullo stato della sonda e dei relativi task.
+Le impostazioni di avvio devono essere specificate nel file di configurazione della sonda (\textit{/etc/testagent/testagent.conf})
 Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8080.
-\subsection{Utilizzo delle APIs di monitoraggio}
 \begin{table}[h]
 \centering
 \begin{tabular}{| m{4.4cm}| m{9cm} | }
 \hline
 \textbf{URL} & \textbf{Descrizione} \\ \hline
-/tasks & Lista di tutti i task eseguiti, da eseguire, e in attesa di esecuzione relativi a un Test Agent durante tutto il suo ciclo di vita \\ \hline 
+/tasks & Lista di tutti i task eseguiti, da eseguire e in attesa di esecuzione relativi a una sonda durante tutto il suo ciclo di vita \\ \hline 
 /task/info/[task-id] & Ottiene le informazioni relative al task [task-id]\\ \hline
 /task/result/[task-id] & Ottiene il risultato del task [task-id]\\ \hline
 \end{tabular}
 \caption{URL REST del servizio di monitoraggio}
 \label{tab:monitoring urls}
 \end{table}
-\subsection{Il gestore degli eventi} %websocket
+
+Esempio di richiesta:
+\begin{Verbatim}
+  GET /task/info/task_id HTTP/1.1
+  Host: testagent:8080
+  User-Agent: curl
+\end{Verbatim}
+
+
+Esempio di risposta:
+\begin{Verbatim}
+  {
+      "task_id": {
+          "args": "<collector>...</collector>",
+          "client": null,
+          "clock": 1079,
+          "eta": null,
+          "exception": null,
+          "exchange": null,
+          "expires": null,
+          "failed": null,
+          "kwargs": "{}",
+          "name": "tasks.add",
+          "received": 1398505411.107885,
+          "result": "'7'",
+          "retried": null,
+          "retries": 0,
+          "revoked": null,
+          "routing_key": null,
+          "runtime": 0.01610181899741292,
+          "sent": null,
+          "started": 1398505411.108985,
+          "state": "SUCCESS",
+          "succeeded": 1398505411.124802,
+          "timestamp": 1398505411.124802,
+          "traceback": null,
+          "uuid": "task_id"
+      }
+    }
+\end{Verbatim}
+
+\subsection{Monitoraggio degli eventi}
+Sono di seguito descritte le API per effettuare il monitoraggio degli eventi sulla sonda tramite WebSocket.
+La specifica WebSocket, sviluppata come parte dell'iniziativa HTML5, introduce un'interfaccia Javascript per realizzare una connessione a socket singola full-duplex, affinché sia possibile trasferire messaggi tra un client e un server\cite{WebSocket}.
 \begin{table}[h]
 \centering
 \begin{tabular}{| m{4.4cm}| m{5cm} | }
@@ -234,6 +287,7 @@ Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e
 \label{tab:events urls}
 \end{table}
 \subsubsection{Esempio di ricezione degli eventi con websocket}
+Un'implementazione pratica di quanto illustrato è la seguente:
 \begin{html}
 <!DOCTYPE html>
 <html>
@@ -256,11 +310,12 @@ Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e
     </body>
 </html>
 \end{html}
-\subsection{Sicurezza}
-
 \section{Il worker}
-\subsection{Backend con Redis}
-\subsection{Client per il worker}
+Il worker implementa tutto il ciclo di vita di un \textit{Collector} dalla sua ricezione fino all'esecuzione di tutti i casi di test in esso descritti.
+I \textit{Collector} vengono lanciati in parallelo su tanti thread quanti sono i thread fisici disponibili sulla macchina sulla quale è in esecuzione la sonda.
+Viene di seguito fornito uno snippet per interagire con il Worker \textit{on-the-fly} in assenza di un Test Manager.
+L'\textit{input atteso da questo script} è un file contenente l'elemento \textit{Collector} del \textit{CertificationModel Instance}.
+
 \begin{python}
 from testagent.services.WorkerService import WorkerService, WorkerServiceException
 from tornado.options import options
@@ -282,14 +337,188 @@ result = start_certification.delay(xml)
 result.get()
 \end{python}
 
-\section{Posizionamento nel framework CUMULUS}
+\section{Sicurezza delle APIs}
+Per rendere sicure le interfacce è stato implementato il protocollo HTTP over TLS con Client Authentication.
+Questa feature di HTTPS consente di autenticare sia il server rispetto al client, tramite l'esposizione di un certificato firmato da una Certification Authority fidata, che il client rispetto al server. Per questo motivo è anche chiamata mutua autenticazione.\newline
+Per comprendere meglio il tipo di garanzia che ciò può assicurare è bene citare la relativa RFC (RFC5246) \cite{RFC5246}.
 
+Il principale obiettivo del protocollo TLS è quello di fornire privatezza e integrità del dato in due applicazioni comunicanti.
+Esso si compone di due strati:
+\begin{itemize}
+\item TLS Record Protocol
+\item TLS Handshake Protocol
+\end{itemize}
 
-\section{Installazione e configurazione}
-\section{Cloud-based TA: Open Stack}
-\section{Bare-metal TA: Raspberry PI}
-\subsection{Deploy manuale del Test Agent}
-\subsubsection{Unit file per SystemD}
-\subsection{Configurazione del Test Agent}
+Al livello più basso, situato immediatamente sopra a un protocollo di trasporto affidabile (ad esempio TCP), troviamo il TLS Record Protocol.
+Esso garantisce alla sicurezza della connessione due proprietà fondamentali:
+\begin{itemize}
+\item La connessione è privata (mediante crittografia simmetrica, le cui chiavi sono generate unicamente per ogni connessione e basate su un segreto negoziato da un altro protocollo (ad esempio TLS Handshake Protocol).
+Il TLS Record Protocol può essere usato anche senza cifratura.
+\item La connessione è affidabile. Il trasporto dei messaggi include un controllo di integrità usando un MAC basato su una chiave. Per calcolare il MAC vengono usate funzioni di hashing sicure. Il Record Protocol può essere usato anche senza un MAC, ma generalmente viene usato in questo modo quando un altro protocol sta utilizzando il Record Protocol solo come trasporto per negoziare i propri parametri di sicurezza.
+\end{itemize}
+Il TLS Record Protocol è usato per l'incapsulazione di vari protocolli di livello più alto. Uno di questi protocolli incapsulati, il TLS Handshake Protocol, permette al server e al client di autenticarsi reciprocamente e di negoziare l'algoritmo di cifratura e le chiavi crittografiche prima che il protocollo applicativo trasmetta o riceva il suo primo byte di dati. Il TLS Handshake Protocol fornisce una connessione sicura che gode di tre principali proprietà:
+\begin{itemize}
+\item L'identità di un peer può essere autenticata usando la crittografia simmetrica o a chiave pubblica (RSA, DSA, DSS, ecc.) L'autenticazione può essere opzionale, ma generalmente è richiesta da almeno uno dei due peer.
+\item La negoziazione del segreto condiviso è sicura: il segreto negoziato non è disponibile agli \textit{eavesdroppers} e per ogni connessione autenticata il segreto non può essere ottenuto, nemmeno nel caso di un attacco \textit{man-in-the-middle}.
+\item La connessione è affidabile: nessun attaccante può modificare la comunicazione di negoziazione senza essere scoperto dalle parti coinvolte.
+\end{itemize}
 
-\section{Scrivere una probe}
+Per mettere in sicurezza le interfacce di integrazione è quindi necessario strutturare una PKI\footnote{Public Key Infrastructure}.
+Una PKI consiste di un insieme di sistemi e processi per assicurarsi che il traffico tra le parti sia generato in modo sicuro, fornendo algoritmi e modalità di cifratura o protocolli per mettere in sicurezza i dati e l'autenticazione.\cite{OpenStackSecurity}
+
+I componenti fondamentali sono:
+\begin{itemize}
+\item \textit{Entità finale}: utente, processo o sistema che costituisce il soggetto del certificato
+\item \textit{Autorità di certificazione}: definisce politiche per l'emissione, la gestione e l'utilizzo dei certificati
+\item \textit{Autorità di registrazione}: un sistema facoltativo a cui l'Autorità di Certificazione delega alcune funzioni di gestione
+\item \textit{Repository}: dove vengono memorizzati i certificati emessi e le liste di revoca
+\item \textit{Relying party}: l'endpoint che considera l'Autorità di Certificazione fidata
+\end{itemize}
+
+Per informazioni su come strutturare una PKI si rimanda a: \textit{http://pki-tutorial.readthedocs.org/en/latest/simple/}.
+
+\section {Scrivere un driver per la sonda di testing}
+In questa sezione verrà descritto come implementare un caso di test affinché possa essere eseguito dalla sonda.
+Un driver di sonda consiste di una classe i cui metodi rappresentano le operazioni atomiche e le relative operazioni di rollback come definiti nel capitolo precedente.
+\begin{python}
+
+from testagent.probe import Probe
+from time import sleep
+
+class MyProbe(Probe):
+    def step1(self, inputs):
+        self.logger.info("Sto eseguendo lo step 1")
+        sleep(10)
+        self.logger.info("Ho eseguito lo step 1")
+        return True
+
+    def rollback1(self, inputs):
+        self.logger.info("Sto eseguendo il rollback dello step 1")
+        sleep(10)
+        self.logger.info("Ho eseguito il rollback per lo step 1")
+
+    def step2(self, inputs):
+        self.logger.info("Sto eseguendo lo step 2")
+        sleep(10)
+        self.logger.info("Ho eseguito lo step 2")
+        
+    def rollback2(self, inputs):
+        self.logger.info("Sto il rollback per lo step 2")
+        sleep(10)        
+        self.logger.info("Ho eseguito il rollback per lo step 2")
+
+    def appendAtomics(self):
+        self.appendAtomic(self.step1, self.rollback1)
+        self.appendAtomic(self.step2, self.rollback2)
+        
+\end{python}
+
+La classe deve ereditare dall'interfaccia \textit{testagent.probe.Probe}. Essa fornisce i seguenti metodi:
+\begin{itemize}
+\item appendAtomic - Aggancia un metodo al driver di sonda
+\item appendAtomics - Metodo astratto che richiama \textit{appendAtomic}. L'ordine degli appendAtomic è importante, poiché determina l'ordine di esecuzione delle operazioni del test.
+\end{itemize}
+All'interno di questa interfaccia è disponibile inoltre un logger. \`E possibile dunque utilizzare:
+\begin{itemize}
+\item logger.info
+\item logger.warning
+\item logger.error
+\end{itemize}
+per collezionare le evidenze.
+Ogni metodo può accedere inoltre ai TestInstances tramite il dizionario \textit{testinstances} in questo modo:
+\begin{Verbatim}
+self.testinstances[Operazione][NomeVariabile]
+\end{Verbatim}
+Implementazioni funzionanti di driver di sonda sono fornite in appendice.
+
+\section {Metodologie di deployment della sonda di testing}
+\subsection {Deployment sul cloud (OpenStack)}
+Per effettuare il deployment della sonda su OpenStack è sufficiente:
+\begin{enumerate}
+\item ottenere l'immagine disco \textit{testagent.qcow2};
+\item caricare l'immagine sull'\textit{image service} \textit{Glance};
+\begin{Verbatim}
+glance image-create --name "SondaCumulus" \
+        --is-public true \
+        --disk-format qcow2 \
+        --container-format bare \
+        --file testagent.qcow2
+\end{Verbatim}
+\item effettuare il boot con Nova con un flavor che garantisca almeno
+\begin{itemize}
+\item 512MB di ram
+\item 10GB di Hard Disk
+\item 4 core di CPU
+\end{itemize}.
+\begin{Verbatim}
+nova boot --image SondaCumulus \
+          --flavor m1.medium \
+          --nic net-id=NET1-ID \
+          SondaCumulusVM
+\end{Verbatim}
+\end{enumerate}
+
+\subsection {Deployment di un ambiente dimostrativo (VirtualBox)}
+Per fini di test è stato effettuato un deployment completo dei componenti del framework finora implementati su VirtualBox.
+Sono state prodotte due immagini:
+\begin{itemize}
+\item \textit{TestManager.vdi}, contenente il Test Manager, sviluppato da Filippo Gaudenzi
+\item \textit{TestAgent.vdi}, contenente la sonda, sviluppata da me
+\end{itemize}
+Una volta creata le macchine virtuali con le immagini fornite, è possibile fare accesso via SSH o dalla console di VirtualBox.
+Le credenziali per queste macchine sono:
+\paragraph{Test Manager}
+\begin{itemize}
+\item User: \textbf{manager}
+\item Password: \textbf{pass1234}
+\end{itemize}
+\paragraph{Sonda}
+\begin{itemize}
+\item User: \textbf{agent}
+\item Password: \textbf{pass1234}
+\end{itemize}
+La macchina virtuale del Test Manager ospita Tomcat che fornisce il servizio SOAP del Test Manager, il database (MySQL) e il servizio RabbitMQ. 
+La macchina virtuale della sonda ospita il software finora illustrato con tutte le dipendenze necessarie. 
+Una volta avviata è necessario configurarla impostando nel file \textit{/etc/hosts} l'ip del testManager.
+Digitare:
+\begin{verbatim}
+\$ sudo \-s
+# vi /etc/hosts
+\end{verbatim}
+e sostituire l'indirizzo IP alla linea corrispondente a \textit{testmanager}.
+A questo punto è consigliato effettuare un riavvio della sonda:
+\begin{verbatim}
+# systemctl restart testagent
+\end{verbatim}
+e del Test Manager:
+\begin{verbatim}
+# service tomcat8 restart
+\end{verbatim}
+A questo punto il framework è pronto per funzionare. Per effettuare le dimostrazioni dei test incluse fare riferimento alla guida disponibile all'indirizzo
+\textit{https://github.com/fgaudenzi/TBprototypeInstallation}	
+
+\subsection {Deployment della sonda bare-metal su Raspberry PI}
+Per effettuare il deployment della sonda su Raspberry PI è sufficiente
+\begin{enumerate}
+\item disporre di una MicroSD di almeno 8GB
+\item ottenere l'immagine disco per MicroSD \textit{testagent.img}
+\item effettuare il deploy:
+\begin{Verbatim}
+dd if=testagent.img of=/dev/SdCard bs=4096
+\end{Verbatim}
+\end{enumerate}
+\section{Valutazione dei costi di deployment}
+Il costo di deployment di una sonda è pari a quello dell'hardware utilizzato per il deployment stesso.
+I requisiti hardware minimi per l'esecuzione della sonda sono:
+\begin{description}[nolistsep]
+\item[RAM] 512MB
+\item[Hard Disk] 10GB
+\end{description}
+L'uso di RAM della sonda è di circa 200MB e può crescere in base al mod in cui vengono scritti ed eseguiti i test e alle librerie, script o risorse esterne a cui essi fanno riferimento.
+Eventuali altri componenti aggiuntivi (es. Redis per la memorizzazione dei dati relativi ai task eseguiti dal worker) comportano requisiti hardware maggiori da quelli indicati.
+
+Per il deployment di una sonda \textit{bare-metal} basata su Raspberry PI il costo dell'hardware è pari al prezzo di acquisto del Raspberry PI e di una MicroSD da almeno 8GB.
+Il prodotto da me utilizzato è stato un Raspberry PI 1 Model B del costo di circa 30 \euro.
+Il costo di una MicroSD da 8GB Class 10 è di circa 10 \euro.
+
+\end{document}

@@ -1,4 +1,7 @@
+
 \documentclass[12pt,fleqn,twoside,a4paper]{book}
+
+
 \usepackage[utf8]{inputenc} %% lettere accentate
 \usepackage[italian]{babel}
 \usepackage[toc,page]{appendix}
@@ -7,39 +10,64 @@
 \usepackage{quoting}
 \usepackage{csquotes}
 \usepackage{xcolor}
+\usepackage{eurosym}
+
 \usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{subfiles}
+\usepackage{graphicx}
+\graphicspath{{immagini}{../immagini/}}
 
-\frontmatter
-\pagestyle{plain}
 
-\mainmatter
-\pagestyle{fancy}
-\fancyhead[LE,RO]{\itshape \nouppercase \rightmark}
-\fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
+\fancypagestyle{frontmatter}{%
+  \fancyhf{}% Clear header/footer
+  \fancyfoot[C]{\thepage}%
+}
+\fancypagestyle{mainmatter}{%
+  \fancyhf{}% Clear header/footer
+  \fancyhead[LE,RO]{\itshape \nouppercase \rightmark}
+  \fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
+  \fancyfoot[C]{\thepage}
+}
+
+%\fancyhead[LE,RO]{\itshape \nouppercase \rightmark}
+%\fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
 
 \quotingsetup{font=small}
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
 
 \usepackage[top=2.5cm,margin=3cm,bottom=2.5cm]{geometry}
-\usepackage{graphicx}
 \usepackage{palatino}
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{tabulary}
+\usepackage{tikz}
+\usepackage{amsmath}
 \usepackage{fancyvrb}
-\usepackage[compact]{titlesec}
+%\usepackage[compact]{titlesec}
 \usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
 \addbibresource{bibliografia.bib}
-
 \input{linguaggi/python.tex}
 \input{linguaggi/html.tex}
+\addto{\captionsenglish}{\renewcommand*{\appendixname}{Appendici}}
+
+
+
+
+
+\AtBeginDocument{\addtocontents{toc}{\protect\thispagestyle{plain}}} 
+\AtBeginDocument{\addtocontents{lof}{\protect\thispagestyle{plain}}} 
+\AtBeginDocument{\addtocontents{lot}{\protect\thispagestyle{plain}}}
+
 \title{TESI}
 \author{Patrizio Tufarolo}
 \date{May 2015}
+\pagestyle{frontmatter}
 \frontmatter
 \makeindex
-\mainmatter
+
+
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{sezioni/frontespizio.tex}
@@ -47,9 +75,11 @@
 \input{sezioni/prefazione.tex}
 \input{sezioni/ringraziamenti.tex}
 \input{sezioni/indice.tex}
-
 %\input{sezioni/simboli_e_notazioni.tex}
+\pagestyle{mainmatter}
+\mainmatter
 \input{sezioni/capitoli.tex}
+\pagestyle{frontmatter}
 \input{sezioni/appendice.tex}
 \input{sezioni/bibliografia.tex}
 %\input{sezioni/indice_analitico.tex}

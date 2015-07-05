@@ -1,3 +1,56 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
 \chapter*{Introduzione}
 \addcontentsline{toc}{chapter}{Introduzione}
 \chaptermark{Introduzione}
+
+La diffusione del modello cloud per l’erogazione in outsourcing di applicazioni distribuite ha posto nuove sfide
+nel campo della sicurezza informatica; è sorta dunque l’esigenza di stabilire meccanismi per costruire un rapporto
+di reciproca fiducia e trasparenza tra il fornitore del servizio cloud e gli utenti finali. Proprio in quest’ottica sono
+nati una serie di progetti finanziati dalla comunità europea. Uno di questi è il progetto FP7 CUMULUS, all’interno
+del quale si colloca il presente lavoro di tesi, il cui obiettivo è quello di costruire un framework di certificazione
+per i servizi cloud. Si vuole quindi realizzare un’architettura, basata sull’utilizzo di sonde conformi allo schema di
+certificazione CUMULUS, che sia in grado di conciliare le esigenze di scalabilità e il polimorfismo dei web services
+con le tecniche di certificazione tradizionali (es. Common Criteria).
+Il progetto di tesi si è focalizzato sull'implementazione e validazione di un agente basato su sonde di test non
+funzionali sulla base delle specifiche e i requisiti dettati dal framework CUMULUS.
+
+L'elaborato di tesi è strutturato come segue:
+\begin{itemize}
+\item \textit{Capitolo 1: \textit{Risk \& security assessment} in infrastrutture cloud}\newline
+Questo primo capitolo illustrerà il \textit{cloud computing} in relazione al contesto storico-evolutivo in cui si è sviluppato, soffermandosi sulle tecnologie di virtualizzazione dei sistemi e di contenimento delle applicazioni di cui si avvale.
+Verranno discussi gli aspetti di sicurezza, evidenziando i punti di forza ed effettuando un'analisi dei rischi in relazione ai vari modelli di servizio e di \textit{deployment}.
+\item \textit{Capitolo 2: Testing del software e di servizi}\newline
+Il collaudo del software consiste nella verifica dinamica del comportamento di un programma su un set finito di casi di test, scelti in modo appropriato da un dominio di esecuzioni infinite specificato.
+Questo capitolo affronterà la tematica del testing, soffermandosi sulle metodologie statiche per il collaudo del software e sulle tecniche dinamiche per il testing delle infrasatrutture distribuite e cloud.
+\item \textit{Capitolo 3: Certificazione e accreditamento}\newline
+Per "\textit{certificazione}" si intende l'insieme di procedure impiegate nel processo di erogazione di un certificato, ovvero la produzione di un documento attestante la compatibilità tra le caratteristiche di un sistema o di una procedura e i requisiti prestabiliti da una norma o da uno standard.
+L'"\textit{accreditamento}" è invece la dichiarazione formale da parte di una terza parte fidata che il processo di certificazione sia a sua volta compatibile con uno standard riconosciuto.
+In ambito di sicurezza informatica, certificazione e accreditamento possono essere intesi come parti di un unico processo: \textit{Certification and Accreditation (C\&A)}.
+Questo capitolo affronterà la certificazione di sicurezza in ambito di \textit{web-services}, illustrando i criteri, le metodologie e i paradigmi implicati.
+\item \textit{Capitolo 4: Certificazione di servizi cloud: il framework CUMULUS}\newline
+Come illustrato nel primo capitolo, le tecnologie \textit{cloud} offrono un approccio molto robusto per la fornitura di servizi a livello di infrastruttura, piattaforma e software, alleggerendo in modo considerevole i costi di gestione e manutenzione di infrastrutture computazionali complesse.
+Nonostante i benefici economici offerti, il cloud computing pone ancora notevoli problematiche riguardanti sicurezza, privacy, autorità e conformità riguardo ai dati e ai servizi software offerti tramite di esso.
+Questi problemi derivano principalmente dalla difficoltà di garantire il mantenimento delle proprietà di sicurezza in un ambiente eterogeneo. Per questo motivo, i fornitori di servizio, rifiutano di assumersi la piena responsabilità sulla sicurezza dei servizi offerti tramite questa tecnologia.
+Sulla base di ciò, si cercherà quindi di definire un framework adatto alla validazione e alla certificazione di infrastrutture, piattaforme e applicativi cloud.
+\item \textit{Capitolo 5: Architettura di certificazione cloud basata su sonde}\newline
+In questo capitolo verrà proposta un'architettura di certificazione basata sulle specifiche e sui requisiti di CUMULUS basata sull'utilizzo di sonde di due tipologie principali:
+\begin{enumerate}
+\item Sonde di monitoraggio
+\item Sonde di testing
+\end{enumerate}
+Si procederà poi con la descrizione di una sonda basata sul testing, formalizzando la struttura di un \textit{driver di sonda} e verrà illustrato il deployment della sonda in vari scenari operativi.
+\item \textit{Capitolo 6: Implementazione della sonda}\newline
+Questo capitolo tratterà l'implementazione della sonda descritta al capitolo 5, illustrando le tecnologie coinvolte nel processo di sviluppo e fornendo una panoramica tecnica dei componenti principali.
+\item \textit{Capitolo 7: Caso d'uso: Certificazione di OpenStack}\newline
+Nel corso del progetto di tesi si è affrontata la certificazione delle proprietà di sicurezza di vari prodotti posizionati su tutti i livelli dello stack cloud (\textit{IaaS}, \textit{PaaS}, \textit{SaaS}. Si è scelto successivamente di focalizzarsi sulla certificazione a livello di infrastruttura.
+Si illustrerà quindi un caso d'uso pratico del prodotto sviluppato, mediante la certificazione di un prodotto per la realizzazione di infrastrutture cloud.
+Tra le molteplici soluzioni open-source IaaS presenti sul mercato (i.e. Apache CloudStack,  Eucalyptus, oVirt, openNebula, OpenStack) si è optato quindi per la certificazione di OpenStack per i seguenti motivi:
+\begin{itemize}
+\item \`E un ambiente totalmente open-source
+\item Si basa su standard noti, aperti e pubblici
+\item La sua diffusione è in costante aumento
+\end{itemize}
+Si offrirà quindi una panoramica sul funzionamento dei servizi di OpenStack, si illustrerà \textit{deployment} del prodotto in tre differenti scenari e si procederà con l'analisi, il testing e la certificazione di alcune proprietà di sicurezza.
+\end{itemize}
+\end{document}
