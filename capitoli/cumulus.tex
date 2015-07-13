@@ -3,8 +3,8 @@
 \chapter{Certificazione di servizi cloud: il framework CUMULUS}
 
 Come illustrato nel primo capitolo, le tecnologie \textit{cloud} offrono un approccio molto robusto per la fornitura di servizi a livello di infrastruttura, piattaforma e software, alleggerendo in modo considerevole i costi di gestione e manutenzione di infrastrutture computazionali complesse.
-Nonostante i benefici economici offerti, il cloud computing pone ancora notevoli problematiche riguardanti sicurezza, privacy, autorità e conformità riguardo ai dati e ai servizi software offerti tramite di esso.
-Questi problemi derivano principalmente dalla difficoltà di garantire il mantenimento delle proprietà di sicurezza in un ambiente eterogeneo. Per questo motivo, i fornitori di servizio, rifiutano di assumersi la piena responsabilità sulla sicurezza dei servizi offerti tramite questa tecnologia.
+Nonostante i benefici economici offerti, il cloud computing pone ancora notevoli problematiche riguardanti sicurezza, privacy, autorità e conformità riguardo ai dati e ai servizi software offerti.
+Questi problemi derivano principalmente dalla difficoltà di garantire il mantenimento delle proprietà di sicurezza in un ambiente eterogeneo. Per questo motivo, i fornitori di servizio rifiutano di assumersi la piena responsabilità sulla sicurezza dei servizi offerti tramite questa tecnologia.
 Molti utenti cloud, a partire dalle istituzioni, vorrebbero poter usufruire di servizi \textit{cloud} certificati dal punto di vista della sicurezza.
 Sulla base di ciò, si cercherà quindi di definire un framework adatto alla validazione e alla certificazione di infrastrutture, piattaforme e applicativi cloud.
 Il progetto in cui si inserisce questo lavoro di tesi è il progetto europeo FP7 CUMULUS (Certification infrastrUcture for MUlti-layer cloUd Services), il quale propone modelli, processi e strumenti al fine di supportare il processo di certificazione per proprietà di sicurezza e non-funzionali in ambito di cloud computing.
@@ -14,15 +14,15 @@ CUMULUS affronta le problematiche descritte tramite lo sviluppo di un framework 
 
 Al fine di effettuare l'\textit{assessment} di determinate proprietà di sicurezza potrebbe essere necessario considerare numerosi tipi di \textit{evidence} catturate a diversi livelli. Queste, affinché possano essere utili per supportare il processo di certificazione, devono essere sanitizzate, aggregate e combinate in modo opportuno.
 Affinché sia possibile porre fiducia sul livello hardware, è possibile utilizzare la \textit{Trusted Computing Platform}, che può fornire la prova che il sistema che si sta ri-certificando sia lo stesso sul quale la certificazione è stata effettuata la prima volta. 
-Ad esempio, una certificazione per l'integrità dei dati dovrebbe considerare sia la possibilità di modifica e corruzione da parte di un software che una manomissione dei dati a livello hardware (ad esempio tramite il collegamento del dispositivo di memorizzazione ad un'altra macchina o l'uso di strumenti specifici per bypassare i controlli di sicurezza del file system).
+Ad esempio, una certificazione per l'integrità dei dati dovrebbe considerare sia la possibilità di modifica e di corruzione da parte di un software, che una manomissione dei dati a livello hardware (ad esempio tramite il collegamento del dispositivo di memorizzazione ad un'altra macchina o l'uso di strumenti specifici per bypassare i controlli di sicurezza del file system).
 Per ottenere ciò si possono utilizzare strumenti specifici come il TPM (\textit{Trusted Platform Module}), che effettua la firma e i controlli di integrità delle informazioni sensibili con chiavi memorizzate in hardware.
 L'integrazione di evidenze eterogenee ottenute dal testing di differenti livelli permettono di definire CUMULUS un framework \textit{multi-layer}.
-Viene quindi introdotto il concetto di \textit{certificazione ibrida}: certificati basati sul collaudo su del software effettuato in un ambiente caratterizzato da determinate condizioni, possono essere combinati con i risultati di operazioni di monitoraggio nel momento in cui le condizioni originali decadono.\cite{SpanoudakisDamiani}
+Viene quindi introdotto il concetto di \textit{certificazione ibrida}: certificati basati sul collaudo del software effettuato in un ambiente con determinate condizioni, possono essere combinati con i risultati di operazioni di monitoraggio nel momento in cui le condizioni originali decadono.\cite{SpanoudakisDamiani}
 
 Visti gli oneri e i costi implicati da un processo complesso come quello della certificazione, lo schema ivi descritto propone:
 \begin{itemize}
 \item Un processo di certificazione iniziale di tutte le proprietà non funzionali e di sicurezza, di costo $c_1$
-\item Più processi di certificazione incrementali, aventi costo $c2 \sim\frac{c1}{n}$, eseguito ad ogni cambiamento del modello di certificazione o di un \textit{asset} critico per la proprietà di sicurezza associata.
+\item Più processi di certificazione incrementali, aventi costo $c2 \sim\frac{c1}{n}$, eseguiti ad ogni cambiamento del modello di certificazione o di un \textit{asset} critico per la proprietà di sicurezza associata.
 \end{itemize}
 La certificazione incrementale può essere supportata dal monitoraggio continuativo del servizio cloud, anziché dall'utilizzo continuativo di tecniche statiche come il testing \cite{Dempsey}.%K. Dempsey et al., “Information Security Continuous Monitoring (ISCM) for Federal Systems and Organisations,” NIST 800-137, 2011
 
@@ -33,7 +33,7 @@ Affinché sia possibile certificare un servizio cloud è necessario strutturare 
 \item Un \textit{Fornitore del servizio}, che ha sviluppato il servizio cloud da certificare.
 \item Un \textit{Fornitore del servizio cloud}, che fornisce l'accesso alle funzionalità di backend per supportare il processo di certificazione.
 \item Una \textit{Certification Authority}, che amministra e gestisce il processo di certificazione.
-\item Uno o più \textit{Accredited lab}, a cui è delegata la responsabilità della valutazione del sistema cloud. Può essere sia un attore specifico, che utilizza il framework per l'emissione del certificato, che un ulteriore framework che esegue automaticamente i processi di certificazione e la verifica dei certificati precedentemente emessi seguendo le linee guida della \textit{Certification Authority}.
+\item Uno o più \textit{Accredited lab}, a cui è delegata la responsabilità della valutazione del sistema cloud. Può essere sia un attore specifico, che utilizza il framework per l'emissione del certificato, sia un ulteriore framework che esegue automaticamente i processi di certificazione e la verifica dei certificati precedentemente emessi seguendo le linee guida della \textit{Certification Authority}.
 \end{itemize}
 
 L'obiettivo del processo di certificazione è quello di produrre e mantenere un certificato  di sicurezza per un sistema \textit{target} (\textit{ToC, Target of Certification}), comprendente tutte le evidenze a supporto delle proprietà certificate.\cite{Cloud1}
@@ -48,7 +48,7 @@ Quando invece è la fase di \textit{In-production evaluation} a non poter essere
 
 Come discusso nel documento \cite{TrustModelCloudAnisDamArd} il processo di certificazione preso in considerazione è basato su:
 \begin{enumerate}
-\item una \textit{proprietà di sicurezza} da certificare, definita in modo astratto (es. confidenzialità, integrità, disponibilità), definita utilizzando gli attributi in base ai meccanismi di sicurezza implicati o ai possibili attacchi;
+\item una \textit{proprietà di sicurezza} da certificare, definita in modo astratto (es. confidenzialità, integrità, disponibilità), ed utilizzando gli attributi in base ai meccanismi di sicurezza implicati o ai possibili attacchi;
 \item un \textit{target di certificazione}, o \textit{ToC}, che definisce il perimetro della certificazione come un insieme di meccanismi appartenenti ad uno o più livelli dello stack cloud;
 \item una descrizione delle attività di valutazione, espresse come un insieme di configurazioni possibili per la validazione della proprietà da certificare;
 \item le \textit{evidenze} a supporto del certificato emesso nei confronti del \textit{ToC}.
@@ -116,7 +116,7 @@ Esso è modellato secondo un automa a stati finiti, dove ogni vertice è uno sta
 I requisiti del framework per la certificazione di sicurezza per servizio cloud sono i seguenti:\cite{Cloud1}
 \begin{enumerate}
 \item \textit{Distributed deployment}: \textbf{deve} fornire la possibilità di effettuare il deployment distribuito dei componenti.
-\item \textit{Multi-Layer and Multi-Tenant certification}: \textbf{dovrebbe} essere in grado di certificare le  proprietà di sicurezza dei servizi e delle applicazioni che spaziano su diversi livelli dello stack \textit{cloud} (dal livello applicativo al livello di infrastruttura). Per esempio la confidenzialità dei dati trasmessi e memorizzati da un'applicazione,  è una proprietà che dipende dai meccanismi implementati a tutti i livelli dello stack cloud.
+\item \textit{Multi-Layer and Multi-Tenant certification}: \textbf{dovrebbe} essere in grado di certificare le  proprietà di sicurezza dei servizi e delle applicazioni che spaziano su diversi livelli dello stack \textit{cloud} (dal livello applicativo al livello di infrastruttura). Per esempio, la confidenzialità dei dati trasmessi e memorizzati da un'applicazione è una proprietà che dipende dai meccanismi implementati a tutti i livelli dello stack cloud.
 \item \textit{Property-driven certification}: \textbf{dovrebbe} implementare un processo di certificazione guidato dalla specifica proprietà da certificare sul sistema target.
 \item \textit{Evidence-based certification}: \textbf{deve} supportare un processo di certificazione che produca un insieme di evidenze sufficienti a dimostrare la proprietà di sicurezza certificata e le includa nel certificato emesso. Le evidenze \textbf{dovrebbero} essere collezionate in modo standard dagli agenti e dalle sonde deployate nel sistema da certificare, in base al meccanismo utilizzato.
 \item \textit{Incremental certification}: \textbf{dovrebbe} fornire un approccio continuativo e incrementale, mediante la ri-valutazione runtime delle evidenze e dei certificati. 
@@ -159,7 +159,7 @@ Il framework è organizzato secondo un'architettura master/slave composta dall'i
 \item Elabora i \textit{CM Instances} per estrarre le configurazioni e i casi di test necessari all'esecuzione del processo di certificazione e per l'inizializzazione dei componenti \textit{slave}
 \item Amministra il ciclo di vita dei certificati esterni raccogliendo e aggregando i risultati delle attività di test.
 \end{enumerate}
-\item Più \textit{Test Agent} - slave - che si occupano dell'esecuzione dei test sul \textit{ToC}. Si occupa di:
+\item Più \textit{Test Agent} - slave - che si occupano dell'esecuzione dei test sul \textit{ToC}. Si occupano di:
 \begin{enumerate}
 \item Installare gli script dei test sulle macchine target (chiamate \textit{ToT, Target of Test}), ottenuti da un repository centralizzato strutturato in modo da garantire l'integrità dei test
 \item Eseguire i casi di test specificati
@@ -167,7 +167,7 @@ Il framework è organizzato secondo un'architettura master/slave composta dall'i
 \end{enumerate}
 \end{itemize}
 Il deploy dei Test Agent è automatizzato, al fine di supportare la scalabilità e l'esecuzione di molteplici processi di certificazione in parallelo. Anche il Test Agent offre funzionalità di scalabilità, distribuendo il carico dei singoli script di testing su più processi tramite uno schedulatore. 
-Nella figura \ref{fig:InterazTaTm} è mostrata l'interazione tar il \textit{Test Agent} e il \textit{Test Manager}, l'iniezione degli script tramite gli \textit{hooks} e l'esecuzione degli script sul \textit{ToC}.
+Nella figura \ref{fig:InterazTaTm} è mostrata l'interazione tra il \textit{Test Agent} e il \textit{Test Manager}, l'iniezione degli script tramite gli \textit{hooks} e l'esecuzione degli script sul \textit{ToC}.
 
 \begin{figure}[H]
 \centering
@@ -200,7 +200,7 @@ I componenti del TM possono essere raggruppati in tre famiglie:
 \item Componenti di engine (\textit{XML Parser, LifeCycle Manager, Aggregator})
 \end{enumerate}
 \begin{itemize}
-\item \textit{Test Management Interface}: front-end del processo di certificazione. Offre delle API per controllare il processo di certificazione, ottenere i certificati e ispezionare il \textit{life cycle}
+\item \textit{Test Management Interface}: front-end del processo di certificazione. Offre delle API per controllare il processo di certificazione, ottenere i certificati e ispezionare il \textit{life cycle}.
 \item \textit{Data Manager}: gestisce le informazioni persistenti sul Test Manager. Utilizza un database per memorizzare tutti gli \textit{artifacts}, inclusi i \textit{CM instances} ed i certificati ad essi relativi.
 \item \textit{XML Parser}: implementa tre funzionalità principali:
 \begin{enumerate}
@@ -210,7 +210,7 @@ I componenti del TM possono essere raggruppati in tre famiglie:
 \end{enumerate}
 \item \textit{Agent Broadcaster/Receiver}: è responsabile di gestire la comunicazione con gli agenti. \`E anche responsabile di effettuare il \textit{dispatching} dei messaggi provenienti dagli agenti verso gli altri componenti del TM. 
 \item \textit{Meccanismo di comunicazione basato su coda}: inoltra i messaggi dagli agenti a un sistema di broadcasting e ricezione. Gestisce anche l'autenticazione degli agenti sulle code di messaggi.
-\item \textit{Agent deployer}: interagisce con le APIs cloud (ad esempio le APIs di OpenStack) per effettuare il deploy degli agenti, permette loro di autenticarsi con il Test Manager abilitandoli alla comunicazione e mantiene una lista di tutti gli agenti disponibili per l'esecuzione di test.
+\item \textit{Agent deployer}: interagisce con le API cloud (ad esempio le API di OpenStack) per effettuare il deploy degli agenti, permette loro di autenticarsi con il Test Manager abilitandoli alla comunicazione e mantiene una lista di tutti gli agenti disponibili per l'esecuzione di test.
 \item \textit{Aggregatore}: effettua la valutazione dei risultati dei test effettuati dal Test Agent e invia una notifica al LifeCycle Manager. L'aggregazione avviene in base a metriche specificate nell'elemento \textit{Aggregator} del \textit{CM Instance}.
 \item \textit{LifeCycle Manager}: riceve la valutazione effettuata dall'aggregatore e, rispettando le condizioni di transizione specificate nel \textit{LifeCycle}, imposta lo stato del certificato.
 \end{itemize}
@@ -219,28 +219,28 @@ I compnenti del Test Agent sono i seguenti:
 \begin{itemize}
 \item \textit{Test Manager Interface}: riceve i comandi dal Test Manager e
 restituisce i risultati dei test al Test Manager
-\item \textit{Collector Manager} Amministra l'installazione, la configurazione e l'esecuzione dei test, effettuando la raccolta delle evidenze e raccogliendo informazioni nei \textit{log} per eventuali operazioni di auditing successive e analisi a posteriori.
-\item \textit{Collector Agent} \`E il singolo processo di testing, avviato alla ricezione di un Test Case in parallelo.
+\item \textit{Collector Manager}: Amministra l'installazione, la configurazione e l'esecuzione dei test, effettuando la raccolta delle evidenze e raccogliendo informazioni nei \textit{log} per eventuali operazioni di auditing successive e analisi a posteriori.
+\item \textit{Collector Agent}: \`E il singolo processo di testing, avviato alla ricezione di un Test Case in parallelo.
 \end{itemize}
 
 \subsection{Flusso di esecuzione}
 Il flusso di esecuzione del processo di certificazione è mostrato nella figura \ref{fig:TMTAComponents} e si articola come segue:
 \begin{enumerate}
-\item Il Data Manager estrae il CM Instance dal database
-\item L'XML Parser effettua il parsing per generare le informazioni da inviare al Test Agent
+\item Il Data Manager estrae il CM Instance dal database.
+\item L'XML Parser effettua il parsing per generare le informazioni da inviare al Test Agent.
 \item L'XML Parser estrae tutte le informazioni necessarie all'eventuale deployment del Test Agent e all'esecuzione del test
 \item L'Agent Deployer controlla i Test Agent registrati, alla ricerca di un Test Agent adatto ad avviare il processo di testing. Se non trova un Test Agent idoneo, ne effettua il deploy e lo registra.
 \item Una volta che il Test Agent è pronto, gli vengono inviate tutte le informazioni tramite l'Agent Broadcaster/Receiver.
-\item Il Test Agent effettua il parsing tramite il Collector Manager
+\item Il Test Agent effettua il parsing tramite il Collector Manager.
 \item Ogni Collector Agent viene lanciato in parallelo e avvia tutti i Test Cases appartenenti al Collector ricevuto.
-\item Ogni risultato viene inviato  al Test Manager tramite la Test Manager Interface
+\item Ogni risultato viene inviato  al Test Manager tramite la Test Manager Interface.
 \item L'Agent Broadcaster/Receiver riceve il messaggio e lo inoltra all'aggregatore che ha tutte le informazioni necessarie per effettuare la valutazione del collector.
 \item L'Aggregatore notifica il LifeCycle Manager che effettua la valutazione delle transazioni, aggiornando eventualmente lo stato del certificato.
 \end{enumerate}
 
 \section{Strategie di deployment}
 Il deployment di questo framework potrebbe essre considerato invasivo dai fornitori di servizi, che dovrebbero aprire i propri sistemi ad agenti di test di terze parti.
-Inoltre i CM Instance potrebbero contener informazioni con un alto livello di confidenzialità come configurazioni interne, credenziali di autenticazione, casi di test specifici. Per affrontare questa problematica vengono proposti due diverse strategie di deployment:
+Inoltre i CM Instance potrebbero contenere informazioni con un alto livello di confidenzialità come configurazioni interne, credenziali di autenticazione, casi di test specifici. Per affrontare questa problematica vengono proposti due diverse strategie di deployment:
 \begin{itemize}
 \item \textit{Self-assessment}: il laboratorio accreditato della certification authority collabora con il fornitore di servizio e definisce un \textit{CM Instance} contenente tutte le informazioni sensibili. Viene quindi preparato un Test Agent pre-configurato con tutti i collectors, i test e l'elenco delle macchine target.
 

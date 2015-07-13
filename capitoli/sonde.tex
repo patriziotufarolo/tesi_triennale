@@ -1,8 +1,8 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Architettura di certificazione cloud basata su sonde}
-In questo capitolo verrà presentata un'architettura di certificazione per sistemi cloud basata sull'utilizzo di sonde, compatibile con il framework CUMULUS.
-Le sonde sono definite come componenti software autonomi, scalabili e orientati all'esecuzione parallela e schedulata dei processi, di cui può essere effettuato il deployment a tutti i livelli dello stack cloud (\textit{IaaS}, \textit{PaaS} e \textit{SaaS}).
+Questo capitolo presenta un'architettura di certificazione per sistemi cloud basata sull'utilizzo di sonde, compatibile con il framework CUMULUS.
+Le sonde sono definite come componenti software autonomi, scalabili e orientati all'esecuzione parallela e schedulata dei processi, dei quali può essere effettuato il deployment a tutti i livelli dello stack cloud (\textit{IaaS}, \textit{PaaS} e \textit{SaaS}).
 
 \`E possibile raggruppare le sonde in due categorie:
 \begin{itemize}
@@ -12,12 +12,12 @@ Le sonde sono definite come componenti software autonomi, scalabili e orientati 
 \newpage
 \section{Componenti della sonda di testing}
 Nel progetto di tesi è stata realizzata una \textit{sonda di testing} ed è stata posizionata all'interno del framework CUMULUS.
-Verranno ora illustrati i componenti principali della sonda descrivendo la corrispondenza degli stessi con i requisiti di CUMULUS.
+Questo paragrafo descrive i componenti principali della sonda soffermandosi sulla corrispondenza degli stessi con i requisiti di CUMULUS.
 \subsection{Communication Bus}
 Il \textit{Communication Bus} rappresenta il protocollo di comunicazione tra il \textit{Test Manager} e le sonde (Figura \ref{fig:CommunicationSonda}).
 Esso è realizzato mediante un meccanismo distribuito basato su code, nel quale il \textit{Test Manager} rappresenta il produttore e le sonde hanno il ruolo di consumatori.
 Il canale è interamente gestito dal \textit{Test Manager}, che si occupa di creare le code e di configurare il controllo degli accessi per abilitarne l'utilizzo alle varie sonde.
-Il Test Manager deposita sul canale i \textit{collector} da eseguire, le sonde eseguono i test specificati nei \textit{collector} con le configurazioni indicate, dopodiché restituiscono i risultati al Test Manager.
+Il Test Manager deposita sul canale i \textit{collector}\cite{CumulusBigDoc} da eseguire, le sonde eseguono i test specificati nei \textit{collector} con le configurazioni indicate, dopodiché restituiscono i risultati al Test Manager.
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{
@@ -50,7 +50,7 @@ Ogni qualvolta un \textit{Collector} viene ricevuto da una sonda ne viene effett
 \subsection {XML Parser \& Marshaller}
 L'\textit{XML Parser \& Marshaller} è il componente che si occupa di effettuare il parsing dei messaggi e realizza le strutture dati contenenti le informazioni da utilizzare ai fini dell'esecuzione dei \textit{collector}.
 Il funzionamento di questo componente è mostrato in figura \ref{fig:XMLParser}.
-Il Test Manager effettua il parsing del \textit{Certification Model} deposita i singoli \textit{Collector} sulla coda, indicando l'\textit{ID} del \textit{Certification Model} nell'attributo \textit{cm\_id}. La sonda, alla ricezione del \textit{Collector} (1), ne effettua il parsing. Procede poi con il parsing dei \textit{TestCases} (2), dei \textit{TestInstance} (3) e dei dati in \textit{Input} (3).
+Il Test Manager effettua il parsing del \textit{Certification Model}\cite{CumulusBigDoc} deposita i singoli \textit{Collector} sulla coda, indicando l'\textit{ID} del \textit{Certification Model} nell'attributo \textit{cm\_id}. La sonda, alla ricezione del \textit{Collector} (1), ne effettua il parsing. Procede poi con il parsing dei \textit{TestCases} (2), dei \textit{TestInstance}\cite{CumulusBigDoc} (3) e dei dati in \textit{Input} (3).
 Per ogni elemento di cui è stato effettuato il parsing viene allocata la struttura dati corrispondente (5)(6)(7)(8).
 Tutte le strutture dati vengono poi aggregate in modo gerarchico sotto l'unico elemento radice \textit{Collector}(9)(10)(11).
 Questo viene poi inoltrato al \textit{Probe Wrapper} per l'esecuzione dei casi di test(12).
@@ -64,7 +64,8 @@ Questo viene poi inoltrato al \textit{Probe Wrapper} per l'esecuzione dei casi d
 
 \newpage
 \subsection {Self Assessment module}
-Il \textit{Self Assessment module} (figura \ref{fig:SelfAssessment} è il componente che permette di gestire le funzionalità di \textit{self assessment}, permettendo la realizzazione di una sonda \textit{ad-hoc} per un determinato scenario, al fine di preservare le informazioni di configurazione per determinate tipologie di test.
+Oltre alla strategia di \textit{deployment} \textit{certification-as-a-service} è previsto anche il supporto ad una modalità \textit{self-assessment}.
+Il \textit{Self Assessment module} (figura \ref{fig:SelfAssessment}) è il componente che permette di gestire le funzionalità di \textit{self assessment}, permettendo la realizzazione di una sonda \textit{ad-hoc} per un determinato scenario, al fine di preservare le informazioni di configurazione per determinate tipologie di test.
 Nel caso in cui il \textit{collector} non fornisca i valori dei parametri di input (1), queste informazioni saranno ottenute tramite il \textit{Self Assessment module} (4).
 
 Poiché il contenuto delle informazioni di Self Assessment è intrinsecamente confidenziale, è strettamente necessario che questi file di configurazione siano protetti con i meccanismi di controllo degli accessi, controllo delle capabilities e gestione dei permessi del sistema operativo (ad es. tramite i permessi Unix gestibili con il comando \textit{chmod} o con strumenti più specifici come \textit{SELinux}).
@@ -79,22 +80,26 @@ La configurazione di eventuali metodologie per la preservazione della confidenzi
 \newpage
 \subsection {Probe Wrapper}
 Questo componente rappresenta il punto di aggancio per un \textit{driver di sonda}.
-Si occupa innanzitutto di verificare se il driver di sonda richiesto per l'esecuzione del \textit{Collector} sia disponibile e ne verifica le dipendenze. Se il driver non è presente, ne effettua il download da un repository centralizzato ed installa tutte le dipendenze dai repository del sistema operativo.
+Si occupa innanzitutto di verificare se il driver di sonda richiesto per l'esecuzione del \textit{Collector} sia disponibile e ne verifica le dipendenze.
+
+\paragraph{}
+Se il driver non è presente, ne effettua il download da un repository centralizzato ed installa tutte le dipendenze dai repository del sistema operativo.
+
 Successivamente viene effettuato un controllo di integrità del driver per individuare eventuali manomissioni.
 Il driver viene poi caricato sulla sonda e ne viene lanciata l'esecuzione su tutti i TestCase.
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{
-\includegraphics[width=10cm]{immagini/ProbeWrapper.png}
+\includegraphics[width=7cm]{immagini/ProbeWrapper.png}
 }
 \caption{Funzionamento del Probe Wrapper}\label{fig:ProbeWrapper}
 \end{figure}
 \newpage
 \subsection {Driver di sonda (Probe Driver)}
 Il probe driver $P$, o \textit{driver di sonda}, è l'implementazione effettiva del singolo test.
-Esso è strutturato da
+Esso è strutturato da:
 \begin{itemize}
-\item una sequenza di $n$ operazioni atomiche, con corrispondenza biunivoca con gli elementi TestInstances, che forniscono i dati in input per l'esecuzione del test.
+\item una sequenza $A$ di $n$ operazioni atomiche $o_n$, con corrispondenza biunivoca con gli elementi TestInstance\cite{CumulusBigDoc}, che forniscono i dati in input per l'esecuzione del test
 \begin{align*}
 A = \{ o_0, o_1, o_2, ... , o_n \}
 \end{align*}
@@ -103,7 +108,7 @@ A = \{ o_0, o_1, o_2, ... , o_n \}
 R = \lnot A = \{ r_0, r_1, r_2, ... , r_n \}
 \end{align*}
 \end{itemize}
-aggregati in coppie ordinate
+aggregati in coppie ordinate.
 \begin{align*}
 P = \{ (o_0, r_0), (o_1, r_1) , (o_2, r_2) , ... , (o_n, r_n)\}
 \end{align*}
@@ -129,7 +134,7 @@ e il risultato del test sarà False (2).
 Nella figura \ref{fig:probeOk} è mostrata l'esecuzione di un driver di sonda il cui test viene eseguito correttamente.
 Il risultato dell'ultima operazione atomica deve essere un valore \textit{boolean} e viene utilizzato come risultato finale per tutto il test (1).
 
-In caso di fallimento di un'operazione $o_x \in P$ , $x \leq n$ (figura \ref{fig:probeRb}) (1) l'interfaccia del Probe Driver si occupa di lasciare il sistema in uno stato sicuro provvedendo ad eseguire in sequenza le operazioni di rollback.
+In caso di fallimento di un'operazione $o_x \in P$ , $x \leq n$ (figura \ref{fig:probeRb}) (1) l'interfaccia del Probe Driver si occupa di lasciare il sistema in uno stato sicuro provvedendo ad eseguire in sequenza le operazioni di rollback e restituendo come risultato \textit{False}.
 
 \subsection {Evidence Collector}
 Questo componente fornisce un metodo per la raccolta delle evidenze e dei log da usare a supporto del processo di certificazione e da includere nel certificato finale.
@@ -166,20 +171,20 @@ I \textit{Collector} vengono eseguiti in modo parallelo, serializzando i \textit
 
 \section{Valutazione dei costi}
 Uno degli aspetti più critici della certificazione è rappresentato dai costi e dall'invasività che essa comporta, in relazione ai reali benefici e al valore aggiunto che offre.
-La validità di un certificato, infatti, si basa principalmente sulla credibilità dell'autorità che lo ha emesso, tenendo conto degli strumenti utilizzati, dell'accuratezza con cui è stata effettuata la validazione del prodotto. e dell'affidabilità dell'intero processo di certificazione nel tempo.
+La validità di un certificato, infatti, si basa principalmente sulla credibilità dell'autorità che lo ha emesso, tenendo conto degli strumenti utilizzati, dell'accuratezza con cui è stata effettuata la validazione del prodotto e dell'affidabilità dell'intero processo di certificazione nel tempo.
 
-Il primo costo da affrontare è dunque dato dalla \textit{Certification Authority}, che si occupa di emettere e gestire il certificato.
+Il primo costo da affrontare è dunque un costo fisso, dato dalla \textit{Certification Authority}, che si occupa di emettere e gestire il certificato.
 Sulla base di quanto affermato, è chiaro che questo costo deriva direttamente dalla credibilità della \textit{Certification Authority} stessa, la quale deve allestire un laboratorio idoneo al processo di certificazione e sottoscrivere gli standard riconosciuti nella relativa area geografica di competenza (es. ISO, IEC, IEEE, NIST, etc.).
+Questo costo fisso è dato anche dalla tipologia di proprietà da certificare e dalla specificità del certificato emesso.
 
-A ciò va poi aggiunto il costo di deployment del framework di certificazione descritto, in tutti i suoi componenti.
+A ciò va poi aggiunto il costo di \textit{deployment} del framework di certificazione descritto, in tutti i suoi componenti.
 L'attività di \textit{testing} su cui si basa il framework è generalmente considerata invasiva, specialmente per sistemi in produzione.
 L'utilizzo di componenti basati sul monitoraggio (che deduce l'evento da una serie di precursori e indicatori), invece, è senza dubbio meno invasivo ma offre meno dinamicità nel processo di certificazione.
 
-Oltre al discorso meramente economico, quindi, un framework di certificazione basato sul testing potrebbe introdurre ulteriori problematiche, più difficili da identificare, che potrebbero tradursi in danni monetari in un momento successivo difficilmente identificabile.
-
-Alcuni test, ad esempio, potrebbero danneggiare la \textit{business-continuity} (es. test di performance sulla rete tramite flooding, test di performance per le operazioni di I/O in un hypervisor, test CPU-intensive), oppure aprire a vulnerabilità di sicurezza durante l'esecuzione di test o ancora causando minacce alla confidenzialità dei dati sensibili (es. password nei file di configurazione o nei Certification Model Instance).
+Un framework di certificazione basato sul testing potrebbe introdurre ulteriori costi, più difficili da identificare.
+Alcuni test, ad esempio, potrebbero influire la \textit{business-continuity} (es. test di performance sulla rete tramite flooding, test di performance per le operazioni di I/O in un hypervisor, test CPU-intensive), oppure aprire a vulnerabilità di sicurezza durante la loro esecuzione, o ancora causando minacce alla confidenzialità dei dati sensibili (es. password nei file di configurazione o nei Certification Model Instance).
 
 Molte di queste problematiche possono essere risolte effettuando il \textit{deployment} del framework su un ambiente separato compatibile con il sistema da certificare.
 Ciò comporta, ovviamente, ulteriori costi, dovuti anche all'\textit{effort} dell'\textit{accredited lab} nello stabilire l'effettiva compatibilità tra i due ambienti. 
-
+Un'ulteriore azione di mitigazione di questa problematica potrebbe consistere nella definizione di finestre di tempo all'interno delle quali dilazionare l'esecuzione dei test.
 \end{document}

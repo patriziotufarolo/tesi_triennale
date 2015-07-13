@@ -1,4 +1,3 @@
-
 \documentclass[12pt,fleqn,twoside,a4paper]{book}
 
 
@@ -11,13 +10,12 @@
 \usepackage{csquotes}
 \usepackage{xcolor}
 \usepackage{eurosym}
-
+\usepackage{ragged2e}
 \usepackage{fancyhdr}
 \usepackage{caption}
 \usepackage{subfiles}
 \usepackage{graphicx}
 \graphicspath{{immagini}{../immagini/}}
-
 
 \fancypagestyle{frontmatter}{%
   \fancyhf{}% Clear header/footer
@@ -29,7 +27,13 @@
   \fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
   \fancyfoot[C]{\thepage}
 }
+\usepackage{afterpage}
 
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
 %\fancyhead[LE,RO]{\itshape \nouppercase \rightmark}
 %\fancyhead[LO,RE]{\itshape \nouppercase Capitolo \arabic{chapter}}
 
@@ -63,16 +67,19 @@
 \title{TESI}
 \author{Patrizio Tufarolo}
 \date{May 2015}
-\pagestyle{frontmatter}
 \frontmatter
 \makeindex
 
 
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{frontmatter}
 \input{sezioni/frontespizio.tex}
+\blankpage
 \input{sezioni/dedica.tex}
 \input{sezioni/prefazione.tex}
+\blankpage
 \input{sezioni/ringraziamenti.tex}
 \input{sezioni/indice.tex}
 %\input{sezioni/simboli_e_notazioni.tex}

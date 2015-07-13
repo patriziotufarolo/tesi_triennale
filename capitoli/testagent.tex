@@ -15,7 +15,7 @@ Python è un linguaggio di scripting e programmazione multi paradigma, molto dif
 \footnote{Compagnia no-profit che detiene la proprietà intellettuale sul linguaggio di programmazione Python - \textit{http://www.python.org/psf}}
 \cite{PythonWebsite}.
 \newline
-La sonda è stata scriita in Python 2.7, utilizzando i paradigmi OOP\footnote{Object Oriented Programming - è un modello di linguaggio di programmazione organizzato attorno al concetto di "oggetti" invece di "azioni" e "dati" invece di "logica" - \textit{http://searchsoa.techtarget.com/definition/object-oriented-programming}.} e AOP\footnote{Aspect Oriented Programming - è un approccio alla programmazione che permette di definire le proprietà globali di un software per determinare con precisione come verrà compilato in eseguibile. Un aspetto è un sottoprogramma che viene associato a una specifica proprietà del programma principale - \textit{http://whatis.techtarget.com/definition/aspect-oriented-programming-AOP} }.
+La sonda è stata scritta in Python 2.7, utilizzando i paradigmi OOP\footnote{Object Oriented Programming - è un modello di linguaggio di programmazione organizzato attorno al concetto di "oggetti" invece di "azioni" e "dati" invece di "logica" - \textit{http://searchsoa.techtarget.com/definition/object-oriented-programming}.} e AOP\footnote{Aspect Oriented Programming - è un approccio alla programmazione che permette di definire le proprietà globali di un software per determinare con precisione come verrà compilato in eseguibile. Un aspetto è un sottoprogramma che viene associato a una specifica proprietà del programma principale - \textit{http://whatis.techtarget.com/definition/aspect-oriented-programming-AOP} }.
 \newline
 
 \item[RabbitMQ]
@@ -44,7 +44,7 @@ Le unità di esecuzione, tasks, sono eseguite parallelamente su uno o più worke
 I tasks possono essere eseguiti in modo asincrono (in background) o in modo sincrono (wait-until-ready).
 Per fare ciò Celery usufruisce principalmente di due librerie:
 \begin{itemize}[nolistsep]
-\item Billiard - \`E un fork della libreria multiprocessing di Python, la quale a sua volta è una versione aggiornata e rinominata del pacchetto pyprocessing sviluppato da R Oudkerk.
+\item Billiard - \`E un fork della libreria multiprocessing di Python, la quale a sua volta è una versione aggiornata e rinominata del pacchetto pyprocessing sviluppato da R. Oudkerk.
 Billiard è stato creato per garantire la compatibilità con Python 2.4 e Python 2.5, senza rinunciare agli aggiornamenti e alle fix del canale principale python-trunk.
 \item Kombu - \`E una libreria di messaggistica per Python. Il suo obiettivo è quello di semplificare la messaggistica il più possibile, fornendo, oltre a un'interfaccia di alto livello idiomatica per il protocollo AMQ, una serie di soluzioni ampiamente collaudate per la risoluzione dei problemi tipici riguardanti la messaggistica.
 \newline\newline
@@ -91,7 +91,7 @@ Cloud-init è un pacchetto per gestire l'inizializzazione di un'istanza cloud.
 \`E stato utilizzato per automatizzare la creazione dell'istanza, effettuare l'installazione delle chiavi pubbliche per consentire l'accesso alla macchina virtuale della sonda e per l'upload di eventuali file di configurazione in fase di boot.
 \item[Raspberry PI]
 Il Raspberry PI è un computer a basso costo, dalle dimensioni di una carta di credito. \`E in grado di svolgere qualunque lavoro ci si aspetterebbe da un normale computer. Ha l'abilità di interagire con il mondo esterno ed è stato utilizzato in un largo insieme di progetti, da music machines a sistemi di motion detection.
-Il progetto è mantenuto dalla Raspberry Pi Foundation, un'agenzia formativa del regno unito.
+Il progetto è mantenuto dalla Raspberry Pi Foundation, un'agenzia formativa del Regno Unito.
 \newline
 Nel lavoro di tesi è stato impiegato per la realizzazione di una sonda \textit{bare-metal}, per effettuare i test a livello di infrastruttura.
 L'immagine della sonda per Raspberry PI è basata sulla distribuzione Pidora.
@@ -155,7 +155,7 @@ class OggettoSingletone(Singletone):
     pass
 \end{python}
 Ogni volta che l'oggetto \textbf{OggettoSingletone} verrà istanziato, sarà richiamata l'eventuale istanza già esistente (linee 10,11,12,13).
-L'implementazione fornita fornisce inoltre un \textit{decoratore} per la configurazione dei vari moduli. Finché i moduli non sono stati configurati chiamando il metodo \textit{configure}, non sarà possibile eseguire i metodi decorati con \textbf{@\_if\_configured}.
+L'implementazione fornita fornisce inoltre un \textit{decoratore} per la configurazione dei vari moduli. Finché i moduli non saranno stati configurati chiamando il metodo \textit{configure}, non sarà possibile eseguire i metodi decorati con \textbf{@\_if\_configured}.
 \newpage
 \section{Bootstrapping della sonda}
 In figura \ref{fig:TestAgent} è raffigurata la fase di avvio della sonda.
@@ -163,7 +163,7 @@ All'avvio vengono inizializzati tutti i moduli Singleton sopra descritti (1).
 Successivamente viene effettuato il parsing dei file di configurazione e degli argomenti passati tramite riga di comando (2) ed essi vengono aggregati in un un'unica configurazione(3). Gli argomenti passati tramite riga di comando hanno più priorità rispetto a quelli specificati nel file di configurazione.
 In base alla configurazione caricata vengono configurati i componenti di Subscription (4), di Monitoraggio (5) e di Logging (6).
 Il componente di Self Assessment, invece, viene configurato in base alle impostazioni specificate in \textit{/etc/testagent/selfassessment/\textbf{cm\_id}/\textbf{\textit{probe\_driver}}.conf} (7).
-Vengono poi avviati i servizi di logging (7), monitoraggio (9) e Subscription (8) caricando la configurazione in \textit{/etc/testagent/subscription/subscription.conf}. Se questa è sufficiente per permettere la connessione del \textit{Worker} a \textit{RabbitMQ}, viene avviato anche il Worker(10), altrimenti sarà necessario inviare la configurazione tramite le APIs. Non appena verrà inviata una configurazione valida, il worker verrà avviato automaticamente.
+Vengono poi avviati i servizi di logging (7), monitoraggio (9) e Subscription (8) caricando la configurazione in \textit{/etc/testagent/subscription/subscription.conf}. Se questa è sufficiente per permettere la connessione del \textit{Worker} a \textit{RabbitMQ}, viene avviato anche il Worker(10), altrimenti sarà necessario inviare la configurazione tramite le API. Non appena verrà inviata una configurazione valida, il worker verrà avviato automaticamente.
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{
@@ -172,10 +172,10 @@ Vengono poi avviati i servizi di logging (7), monitoraggio (9) e Subscription (8
 \caption{Bootstrapping della sonda}\label{fig:TestAgent}
 \end{figure}
 
-\section{APIs di Subscription}
+\section{API di Subscription}
 Le API di subscription consentono di fornire al Worker tutte le informazioni necessarie per effettuare la sottoscrizione alle code su cui il Test Manager deposita i \textit{Collector} da eseguire.
-Le impostazioni di avvio (indirizzo e porta di binding, parametri SSL etc.) devono essere specificati nel file di configurazione della sonda (\textit{/etc/testagent/testagent.conf})
-Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8081.
+Le impostazioni di avvio (indirizzo e porta di binding, parametri SSL etc.) devono essere specificate nel file di configurazione della sonda (\textit{/etc/testagent/testagent.conf})
+Di default, il servizio di monitoraggio effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8081.
 Per effettuare la Subscription occorre inviare al servizio una chiamata POST su /.
 I parametri accettati dal servizio di Subscription sono riportati nella Tabella 5.1.
 \begin{table}[h]
@@ -211,8 +211,8 @@ In tal caso il worker verrà prima fermato, attendendo il completamento dei task
 Per eliminare la configurazione esistente bisogna inviare una richiesta con metodo DELETE.
 Il worker verrà fermato e verrà riavviato solo quando il servizio di Subscription riceverà una nuova configurazione valida.
 Per motivi di confidenzialità non è previsto il retrieve delle informazioni di comunicazione tramite metodo GET.
-\section{APIs di monitoraggio}
-Le APIs di monitoraggio consentono di ottenere le informazioni sullo stato della sonda e dei relativi task.
+\section{API di monitoraggio}
+Le API di monitoraggio consentono di ottenere le informazioni sullo stato della sonda e dei relativi task.
 Le impostazioni di avvio devono essere specificate nel file di configurazione della sonda (\textit{/etc/testagent/testagent.conf})
 Di default effettua il binding su tutti gli indirizzi IPv4 della macchina host e rimane in ascolto sulla porta 8080.
 \begin{table}[h]
@@ -311,7 +311,7 @@ Un'implementazione pratica di quanto illustrato è la seguente:
 </html>
 \end{html}
 \section{Il worker}
-Il worker implementa tutto il ciclo di vita di un \textit{Collector} dalla sua ricezione fino all'esecuzione di tutti i casi di test in esso descritti.
+Il worker implementa tutto il ciclo di vita di un \textit{Collector}, dalla sua ricezione fino all'esecuzione di tutti i casi di test in esso descritti.
 I \textit{Collector} vengono lanciati in parallelo su tanti thread quanti sono i thread fisici disponibili sulla macchina sulla quale è in esecuzione la sonda.
 Viene di seguito fornito uno snippet per interagire con il Worker \textit{on-the-fly} in assenza di un Test Manager.
 L'\textit{input atteso da questo script} è un file contenente l'elemento \textit{Collector} del \textit{CertificationModel Instance}.
@@ -337,9 +337,9 @@ result = start_certification.delay(xml)
 result.get()
 \end{python}
 
-\section{Sicurezza delle APIs}
+\section{Sicurezza delle API}
 Per rendere sicure le interfacce è stato implementato il protocollo HTTP over TLS con Client Authentication.
-Questa feature di HTTPS consente di autenticare sia il server rispetto al client, tramite l'esposizione di un certificato firmato da una Certification Authority fidata, che il client rispetto al server. Per questo motivo è anche chiamata mutua autenticazione.\newline
+Questa caratteristica di HTTPS consente di autenticare sia il server rispetto al client, tramite l'esposizione di un certificato firmato da una Certification Authority fidata, sia il client rispetto al server. Per questo motivo è anche chiamata mutua autenticazione.\newline
 Per comprendere meglio il tipo di garanzia che ciò può assicurare è bene citare la relativa RFC (RFC5246) \cite{RFC5246}.
 
 Il principale obiettivo del protocollo TLS è quello di fornire privatezza e integrità del dato in due applicazioni comunicanti.
@@ -375,11 +375,11 @@ I componenti fondamentali sono:
 \item \textit{Relying party}: l'endpoint che considera l'Autorità di Certificazione fidata
 \end{itemize}
 
-Per informazioni su come strutturare una PKI si rimanda a: \textit{http://pki-tutorial.readthedocs.org/en/latest/simple/}.
+Per informazioni su come strutturare una PKI si rimanda a:\newline \textit{http://pki-tutorial.readthedocs.org/en/latest/simple/}.
 
 \section {Scrivere un driver per la sonda di testing}
 In questa sezione verrà descritto come implementare un caso di test affinché possa essere eseguito dalla sonda.
-Un driver di sonda consiste di una classe i cui metodi rappresentano le operazioni atomiche e le relative operazioni di rollback come definiti nel capitolo precedente.
+Un driver di sonda consiste di una classe i cui metodi rappresentano le operazioni atomiche e le relative operazioni di rollback, come definite nel capitolo precedente.
 \begin{python}
 
 from testagent.probe import Probe
@@ -465,8 +465,8 @@ Sono state prodotte due immagini:
 \item \textit{TestManager.vdi}, contenente il Test Manager, sviluppato da Filippo Gaudenzi
 \item \textit{TestAgent.vdi}, contenente la sonda, sviluppata da me
 \end{itemize}
-Una volta creata le macchine virtuali con le immagini fornite, è possibile fare accesso via SSH o dalla console di VirtualBox.
-Le credenziali per queste macchine sono:
+Una volta create le macchine virtuali con le immagini fornite, è possibile fare accesso via SSH o dalla console di VirtualBox.
+Le credenziali di accesso per queste macchine sono:
 \paragraph{Test Manager}
 \begin{itemize}
 \item User: \textbf{manager}
@@ -482,9 +482,10 @@ La macchina virtuale della sonda ospita il software finora illustrato con tutte 
 Una volta avviata è necessario configurarla impostando nel file \textit{/etc/hosts} l'ip del testManager.
 Digitare:
 \begin{verbatim}
-\$ sudo \-s
+$ sudo -s
 # vi /etc/hosts
 \end{verbatim}
+
 e sostituire l'indirizzo IP alla linea corrispondente a \textit{testmanager}.
 A questo punto è consigliato effettuare un riavvio della sonda:
 \begin{verbatim}
@@ -494,13 +495,13 @@ e del Test Manager:
 \begin{verbatim}
 # service tomcat8 restart
 \end{verbatim}
-A questo punto il framework è pronto per funzionare. Per effettuare le dimostrazioni dei test incluse fare riferimento alla guida disponibile all'indirizzo
+A questo punto il framework è pronto per l'utilizzo. Per effettuare le dimostrazioni dei test incluse fare riferimento alla guida disponibile all'indirizzo\newline
 \textit{https://github.com/fgaudenzi/TBprototypeInstallation}	
 
 \subsection {Deployment della sonda bare-metal su Raspberry PI}
-Per effettuare il deployment della sonda su Raspberry PI è sufficiente
+Per effettuare il deployment della sonda su Raspberry PI è sufficiente:
 \begin{enumerate}
-\item disporre di una MicroSD di almeno 8GB
+\item disporre di una MicroSD di almeno 8 GB
 \item ottenere l'immagine disco per MicroSD \textit{testagent.img}
 \item effettuare il deploy:
 \begin{Verbatim}
@@ -511,14 +512,14 @@ dd if=testagent.img of=/dev/SdCard bs=4096
 Il costo di deployment di una sonda è pari a quello dell'hardware utilizzato per il deployment stesso.
 I requisiti hardware minimi per l'esecuzione della sonda sono:
 \begin{description}[nolistsep]
-\item[RAM] 512MB
-\item[Hard Disk] 10GB
+\item[RAM] 512 MB
+\item[Hard Disk] 10 GB
 \end{description}
-L'uso di RAM della sonda è di circa 200MB e può crescere in base al mod in cui vengono scritti ed eseguiti i test e alle librerie, script o risorse esterne a cui essi fanno riferimento.
-Eventuali altri componenti aggiuntivi (es. Redis per la memorizzazione dei dati relativi ai task eseguiti dal worker) comportano requisiti hardware maggiori da quelli indicati.
+L'utilizzo di memoria RAM della sonda è di circa 200 MB, e può crescere in base al modo in cui vengono scritti ed eseguiti i test e alle librerie, script o risorse esterne a cui essi fanno riferimento.
+Eventuali altri componenti aggiuntivi (es. Redis per la memorizzazione dei dati relativi ai task eseguiti dal worker) comportano requisiti hardware maggiori di quelli indicati.
 
-Per il deployment di una sonda \textit{bare-metal} basata su Raspberry PI il costo dell'hardware è pari al prezzo di acquisto del Raspberry PI e di una MicroSD da almeno 8GB.
+Per il deployment di una sonda \textit{bare-metal} basata su Raspberry PI il costo dell'hardware è pari al prezzo di acquisto del Raspberry PI e di una MicroSD da almeno 8 GB.
 Il prodotto da me utilizzato è stato un Raspberry PI 1 Model B del costo di circa 30 \euro.
-Il costo di una MicroSD da 8GB Class 10 è di circa 10 \euro.
+Il costo di una MicroSD da 8 GB Class 10 è di circa 10 \euro.
 
 \end{document}

@@ -5,7 +5,7 @@
 \textit{OpenStack} è una piattaforma ideata per la realizzazione e la gestione di infrastrutture cloud complesse, pubbliche e private.
 Sviluppato inizialmente da \textit{NASA} e \textit{Rackspace}\footnote{Rackspace è una società che opera nell'ambito del cloud-computing con sede a Windcrest, in Texas - \textit{http://www.rackspace.com/}}, è oggi amministrato dalla \textit{OpenStack Foundation}\footnote{La \textit{OpenStack Foundation} è un'organizzazione senza scopo di lucro che promuove lo sviluppo, la distribuzione e l'adozione del progetto \textit{OpenStack}. La fondazione conta più di 18,000 membri individuali da 140 nazioni in tutto il mondo \cite{OpenstackFoundation}. \textit{https://www.openstack.org/foundation/} }, rilasciato sotto licenza Apache\footnote{La licenza Apache è una licenza di software libero, compatibile con la versione 3 della GNU GPL, non copyleft scritta dalla Apache Software Foundation (ASF). Obbliga gli utenti a preservare l'informativa di diritto d'autore e d'esclusione di responsabilità nelle versioni modificate. \textit{http://directory.fsf.org/wiki/License:Apache2.0}} e sostenuto da aziende del calibro di \textit{IBM}, \textit{Cisco}, \textit{Citrix}, \textit{Dell}, \textit{Oracle} e \textit{Red Hat} \cite{OpenstackWhatIs}.
 
-\`E composto da una serie di progetti che si occupano dell'amministrazione delle risorse seguendo il paradigma \textit{infrastructure-as-a-service}; fornisce quindi strumenti per gestire \textit{pool} di macchine virtuali, lo \textit{storage} e le risorse di rete all'interno di un \textit{data-center} cloud.
+\`E composto da una serie di progetti che si occupano dell'amministrazione delle risorse seguendo il paradigma \textit{infrastructure-as-a-service}; fornisce quindi strumenti per gestire \textit{pool} di macchine virtuali, \textit{storage} e risorse di rete all'interno di un \textit{data-center} cloud.
 Il progetto è \textit{open-source} ed è interamente realizzato utilizzando il linguaggio \textit{Python}, seguendo un'architettura totalmente modulare; ogni componente è indipendente dagli altri e può vivere anche in modalità \textit{stand-alone}.
 I vari produttori solitamente producono delle derivazioni della piattaforma \textit{OpenStack}, che si differenziano tra loro per la metodologia di automazione del \textit{deployment} dei componenti e dal parco servizi offerto. Una di queste metodologie di automazione è rappresentata da \textit{DevStack} (\textit{http://docs.openstack.org/developer/devstack/}), distribuzione di \textit{OpenStack} orientata allo sviluppo e al testing.
 
@@ -16,7 +16,7 @@ Nell'ambito del progetto di tesi è stato utilizzato \textit{DevStack} in config
 In una fase successiva è stato effettuato il \textit{deploy} manuale di un'infrastruttura più complessa distribuita su cinque nodi.
 
 \subsection{Componenti di \textit{OpenStack}}
-Tutti i componenti sono implementati come servizi, che espongono delle APIs \textit{REST}, invocabili tramite un'interfaccia a riga di comando o la \textit{dashboard} grafica \textit{Horizon}.
+Tutti i componenti sono implementati come servizi, che espongono delle API \textit{REST}, invocabili tramite un'interfaccia a riga di comando o la \textit{dashboard} grafica \textit{Horizon}.
 Grazie alla struttura fortemente modulare e alla natura di software \textit{open-source}, chiunque può sviluppare un proprio componente seguendo le linee guida della \textit{OpenStack Foundation} \cite{GuidelinesOpenstackHacking}.
 La comunità \textit{OpenStack} ha comunque identificato una serie componenti che costituiscono il nucleo dell'intera piattaforma, essi sono considerati parte integrante del progetto e vengono perciò mantenuti ufficialmente dalla comunità stessa.
 \begin{figure}[H]
@@ -195,7 +195,7 @@ Per questo motivo potrebbero verificarsi casi di inconsistenza dei dati.
 \subsubsection{Block-storage service: Cinder}
 \textit{Cinder} è un servizio che fornisce la possibilità di centralizzare la gestione e la creazione di volumi di storage organizzazi a blocchi.
 Nello scenario più comune, i volumi Cinder rappresentano lo storage persistente alle istanze.
-Permette di eseguire le operazioni di base per la gestione dei volumi di storage, di espandere i volumi, di gestirne le snapshot (i volumi sono incapsulati in file) e clonarli.
+Cinder permette di eseguire le operazioni di base per la gestione dei volumi di storage, di espandere i volumi, di gestirne gli snapshot (i volumi sono incapsulati in file) e clonarli.
 Permette inoltre di fornire un catalogo di dispositivi di storage con caratteristiche differenti (\textit{volume-types}), che possono implementare o meno determinate feature (ad es. crittografia con LUKS).
 Il dispositivo di storage fisico, sia esso un disco (o un pool di dischi) magnetico o a stato solido, può essere localizzato all'interno dei server Cinder, oppure su un'architettura di storage esterna (SAN) resa disponibile ai nodi Cinder e agli hypervisors tramite canali iSCSI, NFS o Fibre Channel.
 Soluzioni alternative supportate in questo senso, prevedono l'utilizzo di software come GlusterFS o RDB.
@@ -279,7 +279,7 @@ Gli obiettivi di Ceilometer sono i seguenti:
 \item Collezionamento efficiente di dati di misurazione in termini di CPU e costi di rete
 \item Collezionamento dei dati provenienti dai vari servizi o da attività  di polling
 \item Configurazione delle tipologie dei dati collezionati per rispettare vari requisiti operativi
-\item Permettere l'accesso e l'inserimento dei dati di metering tramite APIs REST.
+\item Permettere l'accesso e l'inserimento dei dati di metering tramite API REST.
 \item Costruzione di un framework espandibile, per collezionare anche dati provenienti da componenti \textit{ad-hoc}, tramite plugin appositamente sviluppati
 \item Garantire la non repudiabilità dei dati collezionati tramite meccanismi di firma
 \end{itemize}
@@ -289,7 +289,7 @@ La struttura di Ceilometer è così composta:
 \item Un agente centrale che raccoglie statistiche di utilizzo per le risorse non relative alle istanze o ai nodi di compute.
 \item Agenti per i nodi di compute che raccolgono le statistiche dei nodi di compute e delle istanze.
 \item Un collettore che controlla la coda dei messaggi (per le notifiche inviate dall'infrastruttura e per i dati di misurazione provenienti dagli agenti).  I messaggi vengono poi processati, firmati e inviati su un unico bus etichettati in modo appropriato. Il collettore può essere eseguito su uno o più server.
-\item Un database per memorizzare i dati che sia in grado di gestire scritture (da parte dei collector) e letture concorrenti (da parte delle APIs REST)
+\item Un database per memorizzare i dati che sia in grado di gestire scritture (da parte dei collector) e letture concorrenti (da parte delle API REST)
 \end{itemize}
 
 Questi servizi comunicano utilizzando il bus predefinito di OpenStack. Solamente il collector e il server delle API hanno accesso al database.
@@ -299,7 +299,7 @@ In ogni caso in produzione è generalmente raccomandato l'utilizzo di MongoDB,  
 Le stime di utilizzo del database in un ambiente di produzione sono di 386 scritture per secondo e di circa 33 milioni di eventi al giorno, che richiedono circa 240 GB di storage al mese.
 
 \subsubsection{Testing and benchmarking: Tempest e Rally}
-Tempest è la test suit ufficiale di OpenStack. \`E uno strumento che si occupa di eseguire un insieme di test funzionali su un'infrastruttura cluster OpenStack.
+Tempest è la test suite ufficiale di OpenStack. \`E uno strumento che si occupa di eseguire un insieme di test funzionali su un'infrastruttura cluster OpenStack.
 Esso esegue automaticamente vari test per ciascuna delle patch in ogni progetto di OpenStack, permettendo all'amministratore dell'infrastruttura di aggiungere funzionalità che introducano malfunzionamenti.
 
 La complessità di Tempest è notevole e potrebbe richiedere molto tempo per essere appreso. Inoltre manca di alcune funzionalità utili per il benchmarking, come la possibilità di effettuare simulazioni di carico e di restituire i risultati graficamente.
@@ -354,16 +354,16 @@ sudo git clone https://git.openstack.org/openstack-dev/devstack
 \begin{Verbatim}
 sudo ./devstack/tools/create-stack-user.sh
 \end{Verbatim}
-Verrà quindi creato un utente \textit{stack}, avente directory home in \textit{/opt/stack}. \`E utile a questo punto impostare una password per l'utente tramite il comando
+Verrà quindi creato un utente \textit{stack}, avente directory home in \textit{/opt/stack}. \`E utile a questo punto impostare una password per l'utente tramite il comando:
 \begin{verbatim}
 sudo passwd stack
 \end{verbatim}
-\item Assegnare la ownership della cartella di Devstack all'utente \textit{stack}
+\item Assegnare la ownership della cartella di Devstack all'utente \textit{stack}:
 \begin{verbatim}
 sudo chown stack:stack /opt/devstack
 \end{verbatim}
-\item Uscire dalla sessione corrente con il comando \textit{exit} ed effettuare il login con l'utente \textit{stack} e la password impostata precedentemente
-\item Posizionarsi in \textit{/opt/devstack}
+\item Uscire dalla sessione corrente con il comando \textit{exit} ed effettuare il login con l'utente \textit{stack} e la password impostata precedentemente.
+\item Posizionarsi in \textit{/opt/devstack}:
 \begin{verbatim}
 cd /opt/devstack
 \end{verbatim}
@@ -379,7 +379,7 @@ SERVICE_TOKEN=a682f596-76f3-11e3-b3b2-e716f9080d50
 Se i parametri "\textit{\_PASSWORD}" non vengono specificati, durante il deployment verranno chieste le password in modo interattivo.
 La funzionalità del parametro SERVICE\_TOKEN è quella di fornire un meccanismo di autenticazione, nei confronti di Keystone, senza credenziali per l'amministrazione dei servizi. A tale scopo viene generalmente usato un \textit{UUID} generato tramite la libreria \textit{libuuid} con il comando linux \textit{uuidgen}.
 Tramite il file \textit{local.conf} è inoltre possibile gestire il deployment dei vari servizi di OpenStack, abilitare il logging, oppure specificare le configurazioni per i vari servizi (es. aumentare la dimensione del file di backend per la gestione dei volumi \textit{Cinder}).
-Ulteriori informazioni possono essere trovate all'indirizzo \textit{http://docs.openstack.org/developer/devstack/configuration.html}
+Ulteriori informazioni possono essere trovate all'indirizzo \textit{http://docs.openstack.org/developer/devstack/configuration.html}.
 \item Lanciare il comando \textit{./stack.sh}.
 Questo comando effettuerà il download di tutte le dipendenze in base a quanto specificato nel file \textit{local.conf}, installerà i vari servizi di OpenStack e li lancerà in una sessione di background gestita tramite il comando \textit{screen}.
 
@@ -393,7 +393,7 @@ The password: [PASSWORD]
 This is your host ip: [IP]
 \end{verbatim}
 \end{enumerate}
-Per fermare l'esecuzione di Devstack ci si può affidare allo script \textit{unstack.sh}. Questo terminerà in modo sicuro tutti i servizi, senza perdita di dati.
+Per fermare l'esecuzione di Devstack si può usufruire dello script \textit{unstack.sh}. Questo terminerà in modo sicuro tutti i servizi, senza perdita di dati.
 
 Qualora si volesse riavviare Devstack, è possibile utilizzare il comando \textit{rejoin-stack.sh}. Un'eventuale esecuzione di \textit{stack.sh} potrebbe comportare perdite di dati.
 
@@ -434,11 +434,11 @@ Per implementare la seconda strategia si può fare uso di due modelli:
 \end{figure}
 \end{itemize}
 
-Nella prima casistica il servizio resta in ascolto sull'interfaccia di \textit{loopback} e viene posto un proxy in ascolto sull'interfaccia pubblica. In questo modo tutte le comunicazioni devono essere obbligatoriamente veicolate sul proxy ed avvengono in modo sicuro; viene inoltre fatta la separazione dei privilegi demandando la gestione della chiave privata al servizio proxy.
+Nella prima casistica il servizio resta in ascolto sull'interfaccia di \textit{loopback}, e viene posto un proxy in ascolto sull'interfaccia pubblica. In questo modo tutte le comunicazioni devono essere obbligatoriamente veicolate sul proxy ed avvengono in modo sicuro; viene inoltre fatta la separazione dei privilegi demandando la gestione della chiave privata al servizio proxy.
 Nella seconda casistica, invece, il servizio proxy è posto su un host esterno e si occupa di filtrare uno o più endpoint dei servizi Openstack. Ciò consente la realizzazione di infrastrutture scalabili e di effettuare load-balancing, per la realizzazione di infrastrutture ad alta disponibilità.
 
 Inoltre è possibile separare le tecniche crittografiche tra l'ambiente esterno e l'ambiente interno.
-Un fornitore di servizi cloud pubblico, per esempio, potrebbe voler esporre le APIs pubbliche con un determinato certificato, magari riconosciuto da una \textit{Certification Authority} root fidata, ed utilizzare la propria \textit{PKI}\footnote{Pubic Key Infrastructure} per gestire la comunicazione tra i servizi interni.
+Un fornitore di servizi cloud pubblico, per esempio, potrebbe voler esporre le API pubbliche con un determinato certificato, magari riconosciuto da una \textit{Certification Authority} root fidata, ed utilizzare la propria \textit{PKI}\footnote{Pubic Key Infrastructure} per gestire la comunicazione tra i servizi interni.
 Questa separazione può essere effettuata decrittando i dati sul canale tra proxy e client,
 e iniziando una nuova sessione verso gli endpoint di OpenStack crittografando i dati con le nuove chiavi.
 C'è un breve momento, in questo caso, in cui i dati sono in chiaro, ma si suppone che essi non vengano trasmessi nuovamente sulla rete se non in modo cifrato, per cui non sussiste alcuna problematica di sicurezza.
@@ -459,17 +459,17 @@ Grazie a questa patch, Devstack supporta entrambe le modalità descritte: è pos
 Devstack si occupa di generare automaticamente tutti i certificati e di caricare le Certification Authority nell'elenco delle autorità fidate su tutti i nodi coinvolti nel deployment.
 Alternativamente è possibile specificare dei certificati e delle chiavi di cifratura già presenti.
 
-Per abilitare la funzionalità di proxy TLS sull'endpoint è sufficiente inserire nel file \textit{local.conf} la direttiva
+Per abilitare la funzionalità di proxy TLS sull'endpoint è sufficiente inserire nel file \textit{local.conf} la direttiva:
 \begin{python}
 ENABLED_SERVICES+=,tls-proxy
 \end{python}
 
-Invece, per abilitare SSL in modalità nativa è sufficiente specificare
+Invece, per abilitare SSL in modalità nativa è sufficiente specificare:
 \begin{python}
 USE_SSL=True
 \end{python}
 
-Per utilizzare dei certificati generati precedentemente al deployment occorre specificare le variabili
+Per utilizzare dei certificati generati precedentemente al deployment occorre specificare le variabili:
 \begin{python}
 <SERVICE>\_SSL_CERT=/percorso/del/certificato
 <SERVICE>\_SSL_KEY=/percorso/della/chiave/privata
@@ -501,12 +501,12 @@ Successivamente è stato effettuato il deploy di Red Hat OpenStack su quattro no
 \item 1 Controller - Horizon, Nova, Keystone, connesso alla rete di laboratorio (172.25.27.0/24), con collegamento Internet,  e alla rete di \textit{Management}
 \item 1 Network - Neutron L2, Neutron L3, connesso alla rete di laboratorio, alla rete di Management e alla rete di \textit{Tunneling}
 \item 2 Compute - Nova, Neutron L2, Neutron L3, connessi alla rete di \textit{Management} e alla rete di \textit{Tunneling}
-\end{itemize}.
+\end{itemize}
 
-La \textit{sonda} sviluppata come progetto di tesi, è stata poi posizionata sia a livello infrastruttura (in modalità \textit{bare-metal}, con Raspberry PI), che come macchina virtuale, per eseguire i test a livello \textit{PaaS} e \textit{SaaS}.
+La \textit{sonda} sviluppata come progetto di tesi è stata poi posizionata sia a livello infrastruttura (in modalità \textit{bare-metal}, con Raspberry PI), che come macchina virtuale, per eseguire i test a livello \textit{PaaS} e \textit{SaaS}.
 \section{Certificazione della sicurezza e valutazione dei costi}
 \paragraph{Studio della sicurezza di OpenStack}
-La OpenStack Foundation ha formato un gruppo chiamato \textit{OSSG} (\textit{OpenStack Security Group} responsabile di:
+La OpenStack Foundation ha formato un gruppo chiamato \textit{OSSG} (\textit{OpenStack Security Group}), responsabile di:
 \begin{itemize}
 \item Creare e mantenere un documento contenente le linee guida per la sicurezza \cite{OpenStackSecurity}
 \item Tenere traccia delle vulnerabilità sulla piattaforma
@@ -518,8 +518,8 @@ Il team OSSG ha identificato quattro principali domini di sicurezza:
 \item \textit{Gestione}: riguarda le comunicazioni e i dati  prodotti dagli strumenti e i servizi fondamentali per il funzionamento dell'infrastruttura cloud (es. OpenStack)
 \item \textit{Dati}: riguarda le informazioni a proposito dei servizi di memorizzazione dei dati di OpenStack (es. Glance, Cinder, nova-volume, Swift).
 \end{itemize}
-Nei successivi paragrafi verranno mostrati i criteri per la validazione del framework proposto e del componente sviluppato applicandolo a uno specifico caso d'uso: la certificazione di OpenStack.
-La valutazione del framework è fondata sulla corrispondenza tra i servizi \textit{core} di OpenStack e i domini di sicurezza sopra descritti (figura \ref{fig:OpenStackServiziDomini}) e si basa sul lavoro di \textit{Anisetti et al.} nella pubblicazione "\textit{Toward Security and Performance Certification of OpenStack}" \cite{CertOpenstack}.
+Nei paragrafi seguenti vengono mostrati i criteri per la validazione del framework proposto e del componente sviluppato, applicandolo a uno specifico caso d'uso: la certificazione di OpenStack.
+La valutazione del framework è fondata sulla corrispondenza tra i servizi \textit{core} di OpenStack e i domini di sicurezza sopra descritti (figura \ref{fig:OpenStackServiziDomini}), e si basa sul lavoro di \textit{Anisetti et al.} nella pubblicazione "\textit{Toward Security and Performance Certification of OpenStack}" \cite{CertOpenstack}.
 
 
 \begin{figure}[H]
@@ -636,10 +636,10 @@ La proprietà viene certificata se e solo se entrambi i casi di test riportano u
 Poiché l'ambiente di test sul quale è stata effettuata la certificazione (basato su Devstack, configurato in modalità SSL nativa) è conforme alle linee guida OSSG, entrambi i casi di test hanno avuto risultato positivo e la proprietà è stata certificata.
 
 \paragraph{Valutazione dei costi}
-Sul nostro ambiente di test il processo di certificazione è stata eseguito in \textit{3.139s} così suddivisi:
+Sul nostro ambiente di test il processo di certificazione è stato eseguito in \textit{3.139 s} così suddivisi:
 \begin{itemize}
-\item Valutazione del canale di comunicazione: \textit{2.9282s}, dovuto al costo della scansione NMap nei confronti del target. Questa operazione genera traffico di rete in quantità trascurabile.
-\item Politiche per il controllo degli accessi: \textit{210ms}, dovuto alle tre connessioni SSH implicate. Le operazioni coinvolte generano traffico di rete in quantità trascurabile, ed effettuano richieste al file system.
+\item Valutazione del canale di comunicazione: \textit{2.9282 s}, dovuto al costo della scansione NMap nei confronti del target. Questa operazione genera traffico di rete in quantità trascurabile.
+\item Politiche per il controllo degli accessi: \textit{210 ms}, dovuto alle tre connessioni SSH implicate. Le operazioni coinvolte generano traffico di rete in quantità trascurabile, ed effettuano richieste al file system.
 \end{itemize}
 
 \subsection{Confidenzialità del block-storage}
@@ -748,17 +748,17 @@ Il secondo caso di test, invece, ha avuto esito negativo in quanto l'implementaz
 La proprietà quindi, non è stata certificata ai livelli 2 e 3.
 
 \paragraph{Valutazione dei costi}
-Sul nostro ambiente di test il processo di certificazione è stata eseguito in \textit{14.549s}. La tempistica calcolata tiene conto dei ritardi dovuti alle prestazioni della rete di laboratorio.
+Sul nostro ambiente di test il processo di certificazione è stata eseguito in \textit{14.549 s}. La tempistica calcolata tiene conto dei ritardi dovuti alle prestazioni della rete di laboratorio.
 Per questo processo di certificazione bisogna tenere conto dei costi derivanti dal deployment di un'istanza e dalla creazione di due volumi a blocchi.
-La macchina virtuale utilizzata in fase di test è basata su un'immagine del sistema operativo minimale CirrOS, del peso di 12.6MB, con \textit{flavor} \textit{m1.tiny}, che alloca:
+La macchina virtuale utilizzata in fase di test è basata su un'immagine del sistema operativo minimale CirrOS, del peso di 12.6 MB, con \textit{flavor} \textit{m1.tiny}, che alloca:
 \begin{itemize}
-\item 2GB RAM
-\item 20GB di storage effimero
-\item 0GB di storage a blocchi
-\item 0GB di swap
+\item 2 GB RAM
+\item 20 GB di storage effimero
+\item 0 GB di storage a blocchi
+\item 0 GB di swap
 \end{itemize}
 
-I volumi a blocchi creati sono di 1GB ciascuno. La procedura di creazione dei volumi prevede l'azzeramento dello spazio ad essi allocato, con un costo in termini di operazioni di \textit{I/O} proporzionale alle caratteristiche del dispositivo di memorizzazione.
+I volumi a blocchi creati sono di 1 GB ciascuno. La procedura di creazione dei volumi prevede l'azzeramento dello spazio ad essi allocato, con un costo in termini di operazioni di \textit{I/O} proporzionale alle caratteristiche del dispositivo di memorizzazione.
 I requisiti specificati devono persistere per tutto il tempo di esecuzione del test.
 
 \subsection{Isolamento delle reti virtuali e firewalling}
@@ -779,7 +779,7 @@ I domini implicati sono \textit{pubblico} e \textit{Guest}, il servizio al quale
 Questo processo di certificazione prevede l'esecuzione di un solo caso di test così composto:
 \begin{enumerate}
 \item Deployment di un'istanza honeypot
-\item Iniezione di uno script che apre le porte in un determinato intervallo sull'istanza honeypot mediante il comando \textit{netcat}<
+\item Iniezione di uno script che apre le porte in un determinato intervallo sull'istanza honeypot mediante il comando \textit{netcat}
 \item Associazione tra l'istanza e un \textit{security group} definito a priori
 \item Dichiarazione di un floating ip e associazione dello stesso all'istanza
 \item Rilevamento delle regole dichiarate nella definizione del \textit{security group}
@@ -818,22 +818,22 @@ Nell'ambiente di test nel quale è stata effettuato il processo di certificazion
 
 \paragraph{Valutazione dei costi}
 
-Sul nostro ambiente di test il processo di certificazione è stata eseguito in \textit{23.714s}.
+Sul nostro ambiente di test il processo di certificazione è stata eseguito in \textit{23.714 s}.
 Questo intervallo di tempo comprende:
 \begin{itemize}
-\item Deployment della macchina virtuale, associazione del \textit{security group} e del \textit{floating ip}, apertura delle porte TCP nell'intervallo 1-65535 \textit{8.263s}
-\item Lettura delle informazioni su tutti i \textit{security groups} associati all'istanza (2.738s)
-\item Scansione dell'istanza con \textit{nmap} (12.701s)
-\item Confronto dei risultati con le regole del \textit{security group} (0.012s)
+\item Deployment della macchina virtuale, associazione del \textit{security group} e del \textit{floating ip}, apertura delle porte TCP nell'intervallo \textit{1-65535} (8.263 s)
+\item Lettura delle informazioni su tutti i \textit{security groups} associati all'istanza (2.738 s)
+\item Scansione dell'istanza con \textit{nmap} (12.701 s)
+\item Confronto dei risultati con le regole del \textit{security group} (0.012 s)
 \end{itemize}
 Nella presente valutazione è stata presa in considerazione solamente l'analisi delle porte TCP e la scansione con nmap è stata effettuata in modalità \textit{connect scan}.
 Il driver di sonda sviluppato consente di effettuare una scansione più granulare con \textit{SYN scan}, il ché potrebbe comportare un aumento notevole del tempo di scansione.
 L'analisi delle porte UDP, inoltre, richiede tempistiche ancora maggiori.
 Le tempistiche valutate inglobano i tempi di risposta dei servizi dell'ambiente di test.
-L'istanza utilizzata è basata su un'immagine del sistema operativo Ubuntu, del peso di 244MB, con flavor personalizzato che alloca:
+L'istanza utilizzata è basata su un'immagine del sistema operativo Ubuntu, del peso di 244 MB, con flavor personalizzato che alloca:
 \begin{itemize}
-\item 512MB RAM
-\item 1GB di storage effimero
+\item 512 MB RAM
+\item 1 GB di storage effimero
 \end{itemize}
 
 \end{document}

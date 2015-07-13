@@ -35,7 +35,7 @@ Per questa ragione pone delle sfide importanti ai metodi tradizionali di outsour
 Se da una parte, infatti, i clienti possono usufruire di servizi efficienti al massimo della flessibilità monetaria (modelli \textit{pay-per-use}), è altrettanto vero che la richiesta di innovazione è in crescita, a causa anche della necessità di soddisfare le specifiche esigenze di ogni consumatore \cite{OutsourcingCloud2}.
 
 La definizione presa in considerazione in questo elaborato di tesi è quella fornita dal NIST\footnote{National Institute of Standards and Technology} nel documento NIST SP 800-145: The NIST Definition of Cloud Computing \cite{NISTCloud}.
-Il termine \textit{cloud computing} indica un insieme di tecnologie informatiche che permettono l'accesso on-demand a un pool di risorse condivise (reti, server, storage, potenza computazionale, applicazioni, servizi) messe a disposizione su una rete eterogenea distribuita tramite tecniche di astrazione (es. APIs), virtualizzazione e contenimento, rilasciabili celermente con il minimo effort e la minima interazione da parte sia dell'utente, sia del fornitore di servizio. %ELIA il minimo effort da parte di chi? dell'utente? io scriverei il minimo impegno da parte dell'utente
+Il termine \textit{cloud computing} indica un insieme di tecnologie informatiche che permettono l'accesso on-demand a un pool di risorse condivise (reti, server, storage, potenza computazionale, applicazioni, servizi) messe a disposizione su una rete eterogenea distribuita tramite tecniche di astrazione (es. API), virtualizzazione e contenimento, rilasciabili celermente con il minimo effort e la minima interazione da parte sia dell'utente, sia del fornitore di servizio. %ELIA il minimo effort da parte di chi? dell'utente? io scriverei il minimo impegno da parte dell'utente
 %sia da parte dell'utente che da parte del provider di servizi, l'automazione è totale. Se digitalocean, per esempio, dovesse stare dietro a tutti i clienti, sarebbe una follia. Quindi minimo effort da parte di entrambi...
 L'obiettivo principale del cloud computing è proprio quello di fornire le basi tecniche per soddisfare le esigenze di flessibilità e dinamicità del cliente.
 Mentre in passato le risorse fisiche per effettuare outsourcing venivano mantenute sia dal cliente che dal provider, con l'avvento del cloud computing si stabilisce un paradigma basato sulla fornitura di servizi asset-free \cite{OutsourcingCloud2}.
@@ -68,10 +68,10 @@ In figura \ref{fig:modelliservizio} sono mostrati i modelli di servizio per i se
 \end{figure}
 
 \begin{itemize}
-\item \textit{\textbf{IaaS} - Infrastructure as a Service} Il paradigma IaaS fornisce le risorse fondamentali di calcolo (potenza computazionale, storage, reti, ecc.), permettendo al cliente di installare ed eseguire software arbitrario, che può includere sistemi operativi e applicazioni. Il cliente non gestisce né controlla l'infrastruttura cloud sottostante, ma ha il possesso dei sistemi operativi, della rete (con eventuali restrizioni), lo storage e le applicazioni deployate.
+\item \textit{\textbf{IaaS} - Infrastructure as a Service} Il paradigma IaaS fornisce le risorse fondamentali di calcolo (potenza computazionale, storage, reti, ecc.), permettendo al cliente di installare ed eseguire software arbitrario, che può includere sistemi operativi e applicazioni. Il cliente non gestisce né controlla l'infrastruttura cloud sottostante, ma ha il possesso dei sistemi operativi, della rete (con eventuali restrizioni), dello storage e delle applicazioni deployate.
 \`E il modello più versatile, ma anche il più costoso e difficile da amministrare.
 L'infrastruttura cloud è formata da una o più macchine fisiche che forniscono le risorse hardware per costituire un livello di astrazione nel quale verrà effettuato il deploy di un pool di macchine virtualizzate.
-L'orchestrazione dei processi di business all'interno di una IaaS è spesso demandata a un \textit{middleware} (es. Open Stack, Open Nebula, oVirt), che si occupa di gestire i servizi fondamentali per il sostentamento dell'infrastruttura (es. networking, storage, hypervisor).
+L'orchestrazione dei processi di business all'interno di una IaaS è spesso demandata ad un \textit{middleware} (es. Open Stack, Open Nebula, oVirt), che si occupa di gestire i servizi fondamentali per il sostentamento dell'infrastruttura (es. networking, storage, hypervisor).
 \item \textit{\textbf{PaaS} - Platform as a Service} Il paradigma PaaS fornisce al cliente la possibilità di effettuare il deploy sul cloud di un'applicazione, proprietaria o acquisita, creata utilizzando linguaggi di programmazione, le librerie e i servizi supportati dal fornitore o che il fornitore mette spontaneamente a disposizione. Il cliente non ha né il controllo, né il possesso dell'infrastruttura cloud sottostante, ma può amministrare solamente le proprie applicazioni e personalizzare in modo limitato la configurazione dell'ambiente.
 Esempi di PaaS sono Open Shift, Cloud Foundry, IBM Bluemix.
 \item \textit{\textbf{SaaS} - Software as a Service} Il paradigma SaaS fornisce al cliente il mero utilizzo di un'applicazione in esecuzione su un'infrastruttura cloud. Le applicazioni sono accessibili tramite dispositivi client di vario tipo, interfacce thin-client come il browser web o l'interfaccia utente di un programma.
@@ -130,7 +130,7 @@ Sicurezza dell'host & Sistema operativo, Database & Macchina virtuale \\ \hline
 Sicurezza di risorse astratte & Nessuna & Host, Macchina virtuale, Monitor delle macchine virtuali, Software di gestione delle macchine virtuali, Cluster di macchine virtuali \\  \hline
 
 \end{tabular}
-\caption{Paragone degli oggetti da proteggere a livello infrastruttura in sistemi tradizionali e sistemi informativi sul cloud \cite{CSAssessmentSystemCG}}
+\caption{Risorse da proteggere a livello infrastrutturale in sistemi tradizionali e sistemi informativi sul cloud \cite{CSAssessmentSystemCG}}
 \label{tab:cloud_security_assessment_tab_infr}
 \end{table}
 
@@ -224,7 +224,7 @@ Se la cifratura viene applicata, è utile conoscere anche il meccanismo con cui 
 \caption[Cifratura Simmetrica]{Cifratura Simmetrica: Alice e Bob scambiano un messaggio crittografato, ed effettuano le operazioni di cifratura e decifratura con la stessa chiave \textit{k}}\label{fig:cifraturasimmetrica}
 \end{figure}
 
-Al contrario, la cifratura a chiave pubblica\footnote{Tecnica crittografica che utilizza due chiavi diverse (pubblica e privata) legate da una relazione matematica per effettuare le operazioni di cifratura e decifratura} non è in grado di garantire la stessa efficienza per questo caso d'uso \cite{CloudSecurityBook} (mentre ad esempio si rivelano efficaci per il controllo degli accessi).
+Al contrario, la cifratura a chiave pubblica\footnote{Tecnica crittografica che utilizza due chiavi diverse (pubblica e privata) legate da una relazione matematica per effettuare le operazioni di cifratura e decifratura} non è in grado di garantire la stessa efficienza per questo caso d'uso \cite{CloudSecurityBook} (mentre ad esempio si rivela efficace per il controllo degli accessi).
 
 \begin{figure}[H]
 \centering
@@ -235,14 +235,14 @@ Al contrario, la cifratura a chiave pubblica\footnote{Tecnica crittografica che 
 \end{figure}
 
 Un'altra importante considerazione riguardo la cifratura dei dati è relativa all'attore che effettivamente detiene le chiavi e il modo in cui le gestisce. In molte implementazioni le chiavi sono detenute dal fornitore del servizio, specialmente nel caso in cui la crittografia del dato è offerta come funzionalità integrata.
-La gestione delle chiavi è inoltre un'attività molto complessa
+La gestione delle chiavi è inoltre un'attività molto complessa.
 \`E consigliato che il cliente abbia consapevolezza del contenuto del documento NIST 800-57 "Recommendation for Key Management" \cite{NISTKeys}, organizzato in tre parti: \cite{CloudSecurityBook}
 \begin{itemize}
 \item Parte generale
 \item Raccomandazioni per l'organizzazione della gestione delle chiavi
 \item Guida alla gestione delle chiavi nelle applicazioni
 \end{itemize}
-Inoltre, poiché la difficoltà di gestione delle chiavi è notevole, bisogna sempre tenere a mente che il cloud provider spesso non la effettua in modo opportuno: ad esempio è abitudine comune quella di cifrare i dati di tutti i clienti con un'unica chiave simmetrica.
+Inoltre, bisogna sempre tenere a mente che il cloud provider spesso non effettua la gestione delle chiavi in modo opportuno: ad esempio, è abitudine comune quella di cifrare i dati di tutti i clienti con un'unica chiave simmetrica.
 
 \subparagraph{Integrità}
 La confidenzialità dei dati non implica la loro integrità. La crittografia del dato, di per sé, non basta a verificare che il dato non sia stato manomesso.
@@ -277,6 +277,6 @@ Grazie al documento \cite{CloudSecurityIssues} possiamo inoltre identificare i p
 \item \textit{Recupero}: anche se non sappiamo dove si trovano i dati, il \textit{cloud provider} è tenuto ad informare le eventuali conseguenze sulla loro integrità e disponibilità in caso di disastro o incidente informatico. Occorre strutturare l'offerta in modo che sia presente un meccanismo di ridondanza e di \textit{disaster-recovery}.
 \item \textit{Supporto investigativo}: l'attività di investigazione e di \textit{computer-forensics} potrebbe incontrare notevoli impedimenti in un'ottica di \textit{cloud computing}, a causa di come i dati vengono memorizzati. Gli stessi \textit{log} potrebbero essere sparsi su più \textit{host} e potrebbero non costituire un supporto totalmente affidabile per le attività investigative. La dinamicità e l'elasticità, per come descritte precedentemente, potrebbero costituire un ulteriore problema. 
 \end{itemize}
-\item \textbf{Terminazione del contratto}
+\item \textbf{Terminazione del contratto}: occorre stabilire delle clausole di terminazione del contratto sia per garanzia del fornitore che dell'utilizzatore del servizio.
 \end{itemize}
 \end{document}

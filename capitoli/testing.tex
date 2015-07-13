@@ -18,7 +18,7 @@ Gelperin e Hetzel \cite{GrowthOfSwTesting} hanno poi classificato le fasi (nel 1
 A queste fasi ne va poi aggiunta una sesta, che costituisce l'obiettivo principale del progetto CUMULUS nel quale si inserisce il presente elaborato di tesi: collaudo orientato alla certificazione di servizi cloud.
 Quest'ultima fase verrà discussa nei capitoli a seguire.
 \section{Aspetti economici}
-Il NIST\footnote{National Institute of Standard - \textit{http://www.nist.gov}} ha effettuato una stima dei costi aggiuntivi provocati dalle vulnerabilità software dovute all'inadeguatezza della strutture di testing: essi si aggirano tra i 22 e i 59 miliardi di dollari. Più della metà di questa cifra è sostenuta dagli utenti finali in termini di mitigazione e strategie di contenimento dell'errore, mentre la parte rimanente è sostenuta dagli sviluppatori e riflette le spese aggiuntive causate dall'utilizzo di strumenti e metodi di test inadeguati \cite{NistEconomicImpact}. Un influsso positivo è stato tuttavia dato dall'avvento delle moderne pratiche di deployment continuativo e dei servizi cloud, che hanno notevolmente ridimensionato i costi di re-installazione e patching dei prodotti.\newline
+Il NIST\footnote{National Institute of Standard - \textit{http://www.nist.gov}} ha effettuato una stima dei costi aggiuntivi provocati dalle vulnerabilità software dovute all'inadeguatezza della strutture di testing: essi si aggirano tra i 22 e i 59 miliardi di dollari. Più della metà di questa cifra è sostenuta dagli utenti finali in termini di mitigazione e strategie di contenimento dell'errore, mentre la parte rimanente è sostenuta dagli sviluppatori e riflette le spese aggiuntive causate dall'utilizzo di strumenti e metodi di test inadeguati \cite{NistEconomicImpact}. Un'influenza positiva è stata tuttavia data dall'avvento delle moderne pratiche di deployment continuativo e dei servizi cloud, che hanno notevolmente ridimensionato i costi di re-installazione e patching dei prodotti.\newline
 L'attività di collaudo diventa perciò di fondamentale importanza all'interno del ciclo di vita di un software. Lo scopo è quello di individuare le carenze di correttezza, completezza, affidabilità e sicurezza di un prodotto nella fase di development.
 Essa non è una attività isolata, né un'attività di sviluppo. È piuttosto un'attività di supporto: insignificante se separata dai processi di sviluppo e di per se non produttiva \cite{GAST}.\newline
 Non è quindi stata ancora definita come una scienza a se stante, è piuttosto un altro aspetto del processo di sviluppo \cite{ArtOfSwTesting}.
@@ -44,7 +44,7 @@ Questo approccio, sebbene possa essere applicato a tutti i livelli del processo 
 In ogni caso questo metodo di test può lasciare scoperti molti problemi e non essere efficace per il riconoscimento delle funzionalità non ancora implementate.
 Le tecniche utilizzate comprendono:
 \begin{itemize}
-\item Testing delle APIs esposte all'esterno
+\item Testing delle API esposte all'esterno
 \item Testing sulla copertura del codice, che può essere effettuato secondo varie metriche
 \begin{itemize}
 \item \textit{Function coverage}, restituisce la lista delle procedure chiamate.
@@ -69,7 +69,7 @@ Consiste nel rilascio di versioni del software (beta) a un pubblico limitato est
 \end{itemize}
 \subsection{Grey box testing}
 Consiste in una fusione di white box testing e black box testing.
-Questo approccio si avvale di una conoscenza parziale dell'implementazione di una funzionalità e viene particolarmente usato nel collaudo dell'integrazione di due componenti sviluppati da programmatori diversi, che espongono le proprie APIs.
+Questo approccio si avvale di una conoscenza parziale dell'implementazione di una funzionalità e viene particolarmente usato nel collaudo dell'integrazione di due componenti sviluppati da programmatori diversi, che espongono le proprie API.
 Può avvalersi o meno di tecniche di reverse-engineering totale o parziale del prodotto.
 Avendo conoscenza parziale delle specifiche di implementazione, il tester può realizzare casi di test specifici per determinate vulnerabilità attese (ad es. input malformati, SQL injection, fuzzing, test di gestione delle eccezioni).
 \section{Obiettivi del testing}
@@ -101,8 +101,8 @@ Lo standard ISO/IEC IEEE 29119 \cite{iso29119} a cui si è fatto riferimento spe
 Il concetto di verifica e validazione corrisponde alle due domande:
 \begin{itemize}
 \item \textbf{Have we built the right software?} Il software implementa i requisiti in modo corretto? (\textit{Validazione})
-\item \textbf{Have we built the software right?} Il software soddisfa le esigenze del committente e i requisiti di progettazione? \textit{Verifica}
-In questo modo è possibile specificare in modo più preciso il significat di Verifica e Validazione.
+\item \textbf{Have we built the software right?} Il software soddisfa le esigenze del committente e i requisiti di progettazione? (\textit{Verifica})
+In questo modo è possibile specificare in modo più preciso il significato di Verifica e Validazione.
 Queste le definizioni dal documento "IEEE Standard Glossary of Software Engineering Terminology" \cite{NistGlossary}:
 \end{itemize}
 \begin{itemize}
@@ -123,7 +123,7 @@ L'insieme di operazioni per un accurato piano di V\&V \footnote{Verification and
 \end{itemize}
 
 \subsection{Testing come euristica}
-In ingegneria (e ingegneria del software), un'euristica è un metodo basato sull'esperienza che può essere usato come sostegno per rappresentare e risolvere i problemi. È più che altro utile nella creazione di modelli di sistemi da testare; potrebbe però comunque fallire nella modellazione completa del sistema e pertanto portare a un mancato rilevamento di tutti i difetti \cite{iso29119}.
+In ingegneria (e in ingegneria del software), un'euristica è un metodo basato sull'esperienza che può essere usato come sostegno per rappresentare e risolvere i problemi. È più che altro utile nella creazione di modelli di sistemi da testare; potrebbe però comunque fallire nella modellazione completa del sistema e pertanto portare a un mancato rilevamento di tutti i difetti \cite{iso29119}.
 %ELIA potrebbe però
 \section{Testing nel contesto organizzativo di un progetto}
 In ogni tipo di organizzazione produttrice di software, sia essa una multinazionale con migliaia di tester oppure una società individuale, il testing del software dovrebbe occupare un ruolo di assoluta importanza dal punto di vista dell'organizzazione del business.
@@ -131,15 +131,7 @@ Talvolta, il processo di testing può essere compiuto senza alcuna politica form
 Il processo di collaudo è strettamente legato al contesto in cui si svolge. Ciò significa che deve essere pianificato, monitorato e controllato.
 Il contesto può essere un progetto in sviluppo o la manutenzione continuativa di un sistema in produzione. L'esperienza dell'industria suggerisce che non esiste alcuna strategia, piano, metodo di test funzionale per tutte le circostanze.
 Il collaudo di un progetto viene spesso suddiviso in un numero di sottoprocessi: ognuno di questi ha uno specifico Test Plan, consistente di una strategia di sottoprocesso allineata alla strategia globale del progetto \cite{iso29119}.
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{
-\includegraphics[width=13cm]{immagini/iso29119_fig1.png}
-}
-\caption{Test in un contesto multi-layer - ISO29119 \cite{iso29119}}\label{fig:2}
-\end{figure}
-La Figura \ref{fig:2} mostra chiaramente come il testing si inserisce in un contesto aziendale stratificato.
-Il contesto è composto da leggi, regolamenti e standard industriali, intersecate con le politiche e le procedure sviluppate dall'organizzazione stessa per rendere efficiente l'attività di testing.
+Il contesto in cui si inserisce il testing è composto da leggi, regolamenti e standard industriali, intersecate con le politiche e le procedure sviluppate dall'organizzazione stessa per rendere efficiente l'attività di collaudo.
 Ogni processo può essere indirizzato a più di un livello di test (per esempio, il piano di test di sicurezza si sviluppa ortogonalmente rispetto ai vari livelli di test funzionali).
 Le strategie di testing, inoltre, descrivono anche la modalità con cui i test vengono eseguiti \cite{iso29119}.
 %ELIA: la figura 2.2, non 1.2! idem la 2.3, al posto di 1.3, più sotto :)
@@ -160,7 +152,7 @@ Il sottoprocesso può essere quindi eseguito nei seguenti modi:
 \end{itemize}
 Inoltre viene meglio descritta la relazione tra i tipi di test e le caratteristiche qualitative (per come definite nella ISO/IEC 25010 (ex. ISO/IEC 9126)) \cite{iso29119}
 \section{Le caratteristiche qualitative}
-Lo standard ISO/IEC 25010 \cite{iso25010}, aggiornamento dello standard ISO/IEC 9126 \cite{iso9126}, divide le caratteristiche qualitative in otto categorie, come rappresentato nella figura 2.4.
+Lo standard ISO/IEC 25010 \cite{iso25010}, aggiornamento dello standard ISO/IEC 9126 \cite{iso9126}, divide le caratteristiche qualitative in otto categorie, come rappresentato nella figura \ref{fig:4}.
 
 \begin{figure}[H]
 \centering
@@ -174,12 +166,12 @@ Lo standard ISO/IEC 25010 \cite{iso25010}, aggiornamento dello standard ISO/IEC 
 La funzionalità è l'insieme di capacità del prodotto che stabiliscono che le proprietà implementate da un prodotto o un sistema  rispettino le esigenze effettive sotto determinate condizioni. Essa è composta dalle seguenti sotto-caratteristiche:
 \begin{itemize}
 \item \textbf{Completezza} - Capacità per la quale un determinato set di funzioni copre i processi specificati e gli obiettivi dell'utente
-\item \textbf{Correttezza} - Capacità per la quale un prodotto o un sistema forniscono i risultati corretti con il corretto livello di precisione
+\item \textbf{Correttezza} - Capacità per la quale un prodotto o un sistema forniscono i risultati corretti con il livello corretto di precisione
 \item \textbf{Appropriatezza} - Capacità per cui le funzioni facilitano il raggiungimento degli obiettivi del prodotto
 \end{itemize}
 \paragraph{Efficienza nelle prestazioni}
 Questa caratteristica rappresenta le prestazioni in relazione al numero di risorse usate da un prodotto o un sistema, sotto determinate condizioni.
-È composta dalle seguenti sotto-caratteristiche
+È composta dalle seguenti sotto-caratteristiche:
 \begin{itemize}
 \item \textbf{Comportamento nel tempo} - Capacità per cui il tempo di elaborazione, il tempo di risposta e tasso di produttività corrispondano alla specifica.
 \item \textbf{Utilizzo di risorse} - Capacità per la quale la somma e i tipi di risorse utilizzati da un prodotto o sistema rispetti i requisiti.
@@ -215,7 +207,7 @@ Questa caratteristica rappresenta la capacità di un sistema, prodotto o compone
 
 \paragraph{Sicurezza}
 Questa caratteristica rappresenta la capacità di un sistema o prodotto di proteggere le informazioni e i dati in modo che siano disponibili solo per alcuni prodotti, sistemi o persone con diversi livelli di autorizzazione (controllo degli accessi).
-È composta dalle seguenti sotto-caratteristiche
+È composta dalle seguenti sotto-caratteristiche:
 \begin{itemize}
 \item \textbf{Confidenzialità} - Capacità di assicurarsi che i dati siano accessibili solo a chi è autorizzato ad accedervi.
 \item \textbf{Integrità} - Capacità di prevenire l'accesso non autorizzato o la modifica di programmi o dati.
@@ -227,7 +219,7 @@ Questa caratteristica rappresenta la capacità di un sistema o prodotto di prote
 
 \paragraph{Manutenibilità}
 Questa caratteristica rappresenta la capacità di un sistema o prodotto di essere migliorato in termini di efficienza, corretto o adattato ai cambiamenti dell'ambiente e dei requisiti.
-È composta dalle seguenti sotto-caratteristiche
+È composta dalle seguenti sotto-caratteristiche:
 \begin{itemize}
 \item \textbf{Modularità} - Caratteristica per cui un prodotto o sistema può essere composto di una serie discreta di componenti, in modo che il cambiamento di un singolo componente abbia un impatto minimo sugli altri. 
 \item \textbf{Riusabilità} - Capacità per cui una risorsa può essere usata in uno o più sistemi o per comporre nuove risorse.
@@ -273,7 +265,7 @@ Come descritto dall'articolo "A Formal Approach to Network/Distributed Systems C
 \item Test prestazionale
 \end{itemize}
 \subsection{Testing del software e del sistema}
-In riferimento all'articolo \cite{disttest}, a quanto già scritto nel capitolo e in base agli standard IEEE 1012 \cite{ieee1012}, ISO/IEC/IEEE 12207 \cite{iso12207}, ISO/IEC/IEEE 15288 \cite{iso15288} e ISO/IEC/IEEE 29119 \cite{iso29119} andiamo ora a descrivere il testing di software e di sistema in ambienti distribuiti.
+In riferimento all'articolo \cite{disttest}, a quanto già scritto nel capitolo e in base agli standard IEEE 1012 \cite{ieee1012}, ISO/IEC/IEEE 12207 \cite{iso12207}, ISO/IEC/IEEE 15288 \cite{iso15288} e ISO/IEC/IEEE 29119 \cite{iso29119}, andiamo ora a descrivere il testing di software e di sistema in ambienti distribuiti.
 I processi tecnici di base sono i due già descritti, parlando del V\&V:
 \begin{itemize}
 \item Testing di accettazione del software e del sistema (processo di validazione)
@@ -306,5 +298,5 @@ Senza dubbio, in un ottica di cloud-computing, una delle tematiche più sentite 
 I requisiti principali per le metodologie di test di sicurezza su infrastrutture distribuite e reti sono stati descritti negli standard ITU-T X 1051 \cite{disttestITUTX1051}, ISO/IEC 27001 \cite{iso27001}, ISO/IEC 27002 \cite{iso27002}, ISO/IEC 27005 \cite{iso27005}, i quali definiscono informazioni pratiche per effettuare l'analisi e la gestione dei rischi connessi alle infrastrutture distribuite.
 Le implementazioni di questi standard si basano sia sui metodi formali che sull'esperienza pratica. Il testing deve essere effettuato sia sui singoli componenti del sistema che sull'ambiente preso nella sua interezza.
 Il processo tecnico di base per i test di sicurezza è chiamato "penetration testing".
-Varie metodologie per la valutazione della sicurezza delle infrastrutture distribuite nella loro interezza, mediante la sono stati descritti da Yong e Aitel, Allen, Weidman e altri, che forniscono un approccio basato sulla generazione e l'esecuzione automatizzata di attacchi \cite{disttest}.
+Varie metodologie per la valutazione della sicurezza delle infrastrutture distribuite nella loro interezza, sono stati descritti da Yong e Aitel, Allen, Weidman e altri, e forniscono un approccio basato sulla generazione e sull'esecuzione automatizzata di attacchi \cite{disttest}.
 \end{document}
